@@ -1,131 +1,139 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
 
-
-.signup-screen{
+.signup-screen {
   --background: #fdfaf5;
-
 }
+
 /* En-tête */
 .header h1 {
   background: #1dd1a1;
-     border-radius: 0 0 24px 24px;
-     padding: 30px;
-     display: flex;
-     justify-content: center;
-     margin-top: -5px;
+  border-radius: 0 0 24px 24px;
+  padding: 24px; /* réduit un peu pour un look plus compact */
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+  font-family: 'Quicksand', sans-serif;
 }
 
-/* Conteneur d'inscription */
+/* Conteneur */
 .signup-container {
   max-width: 400px;
-  margin: auto;
-  padding: 20px;
+  margin: 0 auto;
+  padding: 20px 16px; /* ajout d'un peu de padding horizontal */
   text-align: center;
 }
 
+/* Sous-titre */
 .subtitle {
   color: #aaa;
-  margin-bottom: 100px;
-  margin-top:60px;
+  margin-top: 40px;
+  margin-bottom: 60px; /* réduit un peu pour rapprocher le formulaire */
+  font-size: 15px;
 }
 
-  .form-group {
+/* Formulaire */
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  border: 1.5px solid #1dd1a1;
+  border-radius: 50px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+
+  input {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    font-size: 15px;
+    outline: none;
+    background-color: white;
+    color: #333;
+  }
+
+  input::placeholder {
+    color: #999;
+    font-weight: 500;
+  }
+
+  .icon-container {
+    background-color: #1dd1a1;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    margin-bottom: 16px;
-    border: 1.5px solid #1dd1a1;
-    border-radius: 50px;
-    overflow: hidden;
-    background-color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-  
-    input {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      font-size: 15px;
-      outline: none;
-      background-color: white;
-      color: #333;
-    }
-  
-    input::placeholder {
-      color: #999;
-      font-weight: 500;
-    }
-  
-    .icon-container {
-      background-color: #1dd1a1;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-  
-      ion-icon {
-        color: white;
-        font-size: 20px;
-      }
-    }
-  }
-  
-  .icon-left {
-    flex-direction: row-reverse;
-    .icon-container {
-      border-radius: 50px 0 0 50px;
-    }
-  
-    input {
-      border-radius: 0 50px 50px 0;
-      border-left: 1px solid #1dd1a1;
-    }
-  }
-  
-  .icon-right {
-    flex-direction: row-reverse;
-  
-    .icon-container {
-      border-radius: 0 50px 50px 0;
-    }
-  
-    input {
-      border-radius: 50px 0 0 50px;
-      border-right: 1px solid #1dd1a1;
-    }
-  }
-  
-  
-  
-  .signup-button {
-    --background: #1dd1a1;
-    border-radius: 40px;
-    font-weight: bold;
-    margin-top: 150px;
-    margin-bottom: -200px;
-    color: white;
-    font-family:'Quicksand', sans-serif ;
-  }
-  
-  .or-text {
-    font-size: 13px;
-    color: #b1adad;
-  }
-  
-  .social-icons {
-    display: flex;
     justify-content: center;
-    gap: 30px;
-    font-size: 24px;
-    color: #1dd1a1;
+
+    ion-icon {
+      color: white;
+      font-size: 20px;
+    }
   }
- .register-text {
-  margin-top: 20px; // espace suffisant sous le formulaire
+}
+
+.icon-left {
+  flex-direction: row-reverse;
+  .icon-container {
+    border-radius: 50px 0 0 50px;
+  }
+
+  input {
+    border-radius: 0 50px 50px 0;
+    border-left: 1px solid #1dd1a1;
+  }
+}
+
+.icon-right {
+  flex-direction: row-reverse;
+
+  .icon-container {
+    border-radius: 0 50px 50px 0;
+  }
+
+  input {
+    border-radius: 50px 0 0 50px;
+    border-right: 1px solid #1dd1a1;
+  }
+}
+
+/* Bouton */
+.signup-button {
+  --background: #1dd1a1;
+  border-radius: 40px;
+  font-weight: bold;
+  margin-top: 60px; /* réduit pour un meilleur espacement */
+  margin-bottom: 20px;
+  color: white;
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* Texte "ou" */
+.or-text {
+  font-size: 13px;
+  color: #b1adad;
+  margin: 12px 0;
+}
+
+/* Icônes sociales */
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 22px;
+  color: #1dd1a1;
+  margin-top: 10px;
+}
+
+/* Texte d’inscription */
+.register-text {
+  margin-top: 20px;
   font-size: 14px;
   color: #000;
-  text-align: center; // centrer horizontalement
+  text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px; // petit espace entre le texte et le lien
+  gap: 5px;
 }
 
 .register-link {

@@ -1,35 +1,57 @@
 <ion-content class="signup-screen" fullscreen>
   <div class="mobile-wrapper">
+    <!-- Header -->
     <div class="header">
-      <h1>SitMypet</h1>
+      <h1>SitMyPet</h1>
     </div>
-    
+
+    <!-- Subtitle -->
     <div class="signup-container">
-    <p class="subtitle"> Le bonheur de vos animaux est notre priorité. </p>
-      <!-- Nom de l'utilisateur -->
-      <div class="form-group icon-left">
-        <div class="icon-container">
-          <ion-icon name="person-outline"></ion-icon>
-        </div>
-        <input type="text" placeholder="Nom de l'utilisateur" />
-      </div>
-      <!-- Email -->
-      <div class="form-group icon-right">
-        <input type="email" placeholder="Adresse e-mail" />
-        <div class="icon-container">
-          <ion-icon name="mail-outline"></ion-icon>
-        </div>
-      </div>
-      <!-- Mot de passe -->
-      <div class="form-group icon-left">
-        <div class="icon-container">
-          <ion-icon name="lock-closed-outline"></ion-icon>
-        </div>
-        <input type="password" placeholder="Mot de passe" />
-      </div>
+      <p class="subtitle">Le bonheur de vos animaux est notre priorité.</p>
 
-  <ion-button  routerLink="/login" expand="block" class="signup-button">Envoyer</ion-button>
+      <!-- Form -->
+      <form class="signup-form" autocomplete="off" >
+        <!-- First Name -->
+        <div class="form-group icon-left">
+          <div class="icon-container">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <input type="text" placeholder="Prénom" />
+        </div>
 
-  </div>
+        <!-- Last Name -->
+        <div class="form-group icon-left">
+          <div class="icon-container">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <input type="text" placeholder="Nom" />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group icon-right">
+          <input type="email" placeholder="Adresse e-mail" />
+          <div class="icon-container">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group icon-left">
+          <div class="icon-container">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <input type="password" placeholder="Mot de passe" />
+        </div>
+
+        <!-- Submit Button -->
+        <ion-button expand="block" class="signup-button">Créer un compte</ion-button>
+
+        <!-- Redirect to Login -->
+        <div class="login-link">
+          <p>Vous avez déjà un compte ? <a routerLink="/login" class="register-link">Se connecter</a></p>
+        </div>
+      </form>
+    </div>
   </div>
 </ion-content>
+<!-- Footer -->

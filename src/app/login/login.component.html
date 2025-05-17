@@ -1,13 +1,18 @@
 <ion-content class="signup-screen" fullscreen>
-  <div class="header">
-    <h1>SitMypet</h1>
+  <div class="mobile-wrapper">
+    <!-- Header -->
+    <div class="header">
+      <h1>SitMyPet</h1>
+    </div>
 
+    <!-- Container -->
     <div class="signup-container">
       <p class="subtitle">Leur bonheur, notre priorité</p>
 
-      <!-- Formulaire connecté au FormGroup -->
+      <!-- Form -->
       <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
 
+        <!-- Email -->
         <div class="form-group icon-right">
           <input type="email" placeholder="Adresse e-mail" formControlName="email" />
           <div class="icon-container">
@@ -15,6 +20,7 @@
           </div>
         </div>
 
+        <!-- Password -->
         <div class="form-group icon-left">
           <div class="icon-container">
             <ion-icon name="lock-closed-outline"></ion-icon>
@@ -22,17 +28,18 @@
           <input type="password" placeholder="Mot de passe" formControlName="password" />
         </div>
 
-        
-
+        <!-- Submit Button -->
         <ion-button expand="block" type="submit" class="signup-button" [disabled]="loginForm.invalid">
-          Se Connecter
+          Se connecter
         </ion-button>
       </form>
 
-      <p class="register-text">
-        Vous n'avez pas de compte ?
-        <a routerLink="/signup" class="register-link">S'inscrire</a>
-      </p>
+      <!-- Register Redirect -->
+      <div class="login-link">
+        <p>Vous n'avez pas de compte ?
+          <a routerLink="/signup" class="register-link">S'inscrire</a>
+        </p>
+      </div>
     </div>
   </div>
 </ion-content>
