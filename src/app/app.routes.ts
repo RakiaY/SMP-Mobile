@@ -28,6 +28,7 @@ export const routes: Routes = [
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:index', component: PetProfilePage },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
+
   {
     path: 'home',
     loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)

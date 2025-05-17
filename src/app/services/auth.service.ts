@@ -25,12 +25,35 @@ export class AuthService {
 
   loginUser(loginData: any): Observable<any> {
     return this.http.post(baseUrl + "login", loginData).pipe(
+      switchMap((response: any) => 
+        from(
+          (async () => {
+            await this.initStorage();
+            if (response?.token) {
+              await this.storage.set('auth_token', response.token);
+            }
+            if (response?.user_information) {
+              await this.storage.set('current_user', response.user_information);
+            }
+            return response;
+          })()
+        )
+      ),
+      catchError(error => {
+        console.error("Login error:", error);
+        return throwError(() => new Error(error?.error?.message || 'Erreur de connexion'));
+      })
+    );
+  }
+
+  registerOwner(ownerData: any): Observable<any> {
+    return this.http.post(baseUrl + "registerpetowner", ownerData).pipe(
       switchMap((response: any) =>
         from(this.initStorage()).pipe(
           tap(async () => {
             if (response?.token) {
               await this.storage.set('auth_token', response.token);
-              console.log('✅ Login réussi, token et user enregistrés');
+              console.log('Inscription réussie, token enregistré');
             }
             if (response?.user_information) {
               await this.storage.set('current_user', response.user_information);
@@ -40,8 +63,8 @@ export class AuthService {
         )
       ),
       catchError(error => {
-        console.error("Login error:", error);
-        return throwError(() => new Error(error?.error?.message || 'Erreur de connexion'));
+        console.error("Erreur inscription propriétaire:", error);
+        return throwError(() => new Error(error?.error?.message || 'Erreur lors de l\'inscription'));
       })
     );
   }
@@ -54,7 +77,7 @@ export class AuthService {
   async isLoggedIn(): Promise<boolean> {
     await this.initStorage();
     const token = await this.storage.get('auth_token');
-    console.log('🔍 Vérification token:', token);
+    console.log('Vérification token:', token);
     return !!token;
 }
 

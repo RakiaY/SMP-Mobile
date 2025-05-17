@@ -157,3 +157,16 @@
 .register-link:hover {
   text-decoration: underline;
 }
+
+.error-message {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: -12px;
+  margin-bottom: 12px;
+  text-align: left;
+  padding-left: 50px;
+}
+
+.form-group.invalid input {
+  border-color: #e74c3c !important;
+}

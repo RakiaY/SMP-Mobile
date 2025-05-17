@@ -1,57 +1,79 @@
 <ion-content class="signup-screen" fullscreen>
   <div class="mobile-wrapper">
-    <!-- Header -->
     <div class="header">
       <h1>SitMyPet</h1>
     </div>
 
-    <!-- Subtitle -->
     <div class="signup-container">
       <p class="subtitle">Le bonheur de vos animaux est notre priorité.</p>
 
-      <!-- Form -->
-      <form class="signup-form" autocomplete="off" >
-        <!-- First Name -->
-        <div class="form-group icon-left">
+      <form [formGroup]="registerForm" (ngSubmit)="submitForm()" autocomplete="off" class="signup-form">
+        <!-- Prénom -->
+        <div class="form-group icon-left" [class.invalid]="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched">
           <div class="icon-container">
             <ion-icon name="person-outline"></ion-icon>
           </div>
-          <input type="text" placeholder="Prénom" />
+          <input type="text" placeholder="Prénom" formControlName="first_name" />
+        </div>
+        <div class="error-message" *ngIf="registerForm.get('first_name')?.invalid && registerForm.get('first_name')?.touched">
+          Prénom requis
         </div>
 
-        <!-- Last Name -->
-        <div class="form-group icon-left">
+        <!-- Nom -->
+        <div class="form-group icon-left" [class.invalid]="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched">
           <div class="icon-container">
             <ion-icon name="person-outline"></ion-icon>
           </div>
-          <input type="text" placeholder="Nom" />
+          <input type="text" placeholder="Nom" formControlName="last_name" />
+        </div>
+        <div class="error-message" *ngIf="registerForm.get('last_name')?.invalid && registerForm.get('last_name')?.touched">
+          Nom requis
         </div>
 
         <!-- Email -->
-        <div class="form-group icon-right">
-          <input type="email" placeholder="Adresse e-mail" />
+        <div class="form-group icon-right" [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          <input type="email" placeholder="Adresse e-mail" formControlName="email" />
           <div class="icon-container">
             <ion-icon name="mail-outline"></ion-icon>
           </div>
         </div>
+        <div class="error-message" *ngIf="registerForm.get('email')?.errors && registerForm.get('email')?.touched">
+          <span *ngIf="registerForm.get('email')?.errors?.['required']">Email requis</span>
+          <span *ngIf="registerForm.get('email')?.errors?.['email']">Email invalide</span>
+        </div>
 
-        <!-- Password -->
-        <div class="form-group icon-left">
+        <!-- Mot de passe -->
+        <div class="form-group icon-left" [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
           <div class="icon-container">
             <ion-icon name="lock-closed-outline"></ion-icon>
           </div>
-          <input type="password" placeholder="Mot de passe" />
+          <input type="password" placeholder="Mot de passe" formControlName="password" />
+        </div>
+        <div class="error-message" *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">Mot de passe requis</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimum 6 caractères</span>
+        </div>
+        <!-- Confirmation mot de passe -->
+        <div class="form-group icon-left" [class.invalid]="(registerForm.hasError('passwordMismatch') || registerForm.get('password_confirmation')?.touched) && registerForm.get('password_confirmation')?.invalid">
+          <div class="icon-container">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <input type="password" placeholder="Confirmer le mot de passe" formControlName="password_confirmation" />
+        </div>
+        <div class="error-message" *ngIf="registerForm.hasError('passwordMismatch') && registerForm.get('password_confirmation')?.touched">
+          Les mots de passe ne correspondent pas
         </div>
 
-        <!-- Submit Button -->
-        <ion-button expand="block" class="signup-button">Créer un compte</ion-button>
+        <ion-button expand="block" class="signup-button" type="submit" [disabled]="registerForm.invalid || loading">
+          {{ loading ? 'Chargement...' : 'Créer un compte' }}
+        </ion-button>
 
-        <!-- Redirect to Login -->
         <div class="login-link">
           <p>Vous avez déjà un compte ? <a routerLink="/login" class="register-link">Se connecter</a></p>
         </div>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
       </form>
     </div>
   </div>
 </ion-content>
-<!-- Footer -->

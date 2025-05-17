@@ -1,45 +1,49 @@
 <ion-content class="signup-screen" fullscreen>
   <div class="mobile-wrapper">
-    <!-- Header -->
+    <!-- En‑tête -->
     <div class="header">
       <h1>SitMyPet</h1>
     </div>
 
-    <!-- Container -->
     <div class="signup-container">
-      <p class="subtitle">Leur bonheur, notre priorité</p>
+      <p class="subtitle">Ravi de vous revoir !</p>
 
-      <!-- Form -->
-      <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
-
+      <form [formGroup]="loginForm" (ngSubmit)="submitForm()" autocomplete="off" class="signup-form">
         <!-- Email -->
-        <div class="form-group icon-right">
-          <input type="email" placeholder="Adresse e-mail" formControlName="email" />
+        <div class="form-group icon-right" [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <input type="email" placeholder="Adresse e‑mail" formControlName="email" />
           <div class="icon-container">
             <ion-icon name="mail-outline"></ion-icon>
           </div>
         </div>
+        <div class="error-message" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+          <span *ngIf="loginForm.get('email')?.errors?.['required']">Email requis</span>
+          <span *ngIf="loginForm.get('email')?.errors?.['email']">Email invalide</span>
+        </div>
 
-        <!-- Password -->
-        <div class="form-group icon-left">
+        <!-- Mot de passe -->
+        <div class="form-group icon-left" [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           <div class="icon-container">
             <ion-icon name="lock-closed-outline"></ion-icon>
           </div>
           <input type="password" placeholder="Mot de passe" formControlName="password" />
         </div>
+        <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+          Mot de passe requis
+        </div>
 
-        <!-- Submit Button -->
-        <ion-button expand="block" type="submit" class="signup-button" [disabled]="loginForm.invalid">
-          Se connecter
+        <!-- Bouton -->
+        <ion-button expand="block" class="signup-button" type="submit" [disabled]="loginForm.invalid || loading">
+          {{ loading ? 'Chargement…' : 'Se connecter' }}
         </ion-button>
-      </form>
 
-      <!-- Register Redirect -->
-      <div class="login-link">
-        <p>Vous n'avez pas de compte ?
-          <a routerLink="/signup" class="register-link">S'inscrire</a>
-        </p>
-      </div>
+        <!-- Lien inscription -->
+        <div class="login-link">
+          <p>Pas encore de compte ?
+            <a routerLink="/signup" class="register-link">S’inscrire</a>
+          </p>
+        </div>
+      </form>
     </div>
   </div>
 </ion-content>
