@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
 
 
@@ -19,7 +18,7 @@ import { Storage } from '@ionic/storage-angular';
   imports: [IonicModule, 
     RouterModule 
     , ReactiveFormsModule
-    ,CommonModule,HttpClientModule
+    ,CommonModule
 
   ],
   templateUrl: './login.component.html',
