@@ -11,6 +11,8 @@ import { FindSitterComponent } from './find-sitter/find-sitter.component';
 import { PetProfilePage } from './pet-profile/pet-profile.page';
 import { PetsPage }           from './pets/pets.page';
 import { DashboardSitterComponent } from './dashboard-sitter/dashboard-sitter.component';
+import { AuthGuard } from './guards/auth.guard';
+import { LogoutGuard } from './guards/logout.guard';
 
 export const routes: Routes = [
   { path: '', component: SplashComponent }, // ✅ doit être tout en haut
@@ -25,15 +27,36 @@ export const routes: Routes = [
   { path: 'pets/add', component: PetProfilePage },
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:index', component: PetProfilePage },
-    { path: 'dashboard-sitter', component:   DashboardSitterComponent},
-
+  { path: 'dashboard-sitter', component:   DashboardSitterComponent},
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent),
+    canActivate: [LogoutGuard]
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [AuthGuard]
+  },
+  //{ path: '', redirectTo: 'login', pathMatch: 'full'},
+  {
+    path: 'dashboard-sitter',
+    loadComponent: () => import('./dashboard-sitter/dashboard-sitter.component').then(m => m.DashboardSitterComponent),
+    canActivate: [AuthGuard]  // <-- protected route
+  },
   {
     path: 'pet-profile',
-    loadComponent: () => import('./pet-profile/pet-profile.page').then( m => m.PetProfilePage)
+    loadComponent: () => import('./pet-profile/pet-profile.page').then( m => m.PetProfilePage),
+    canActivate: [AuthGuard]  // <-- protected route
   },
   {
     path: 'pets',
-    loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage)
+    loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage),
+    canActivate: [AuthGuard]  // <-- protected route
   }
 
 ];
