@@ -10,6 +10,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { FindSitterComponent } from './find-sitter/find-sitter.component';
 import { PetProfilePage } from './pet-profile/pet-profile.page';
 import { PetsPage }           from './pets/pets.page';
+import { DashboardSitterComponent } from './dashboard-sitter/dashboard-sitter.component';
 
 export const routes: Routes = [
   { path: '', component: SplashComponent }, // ✅ doit être tout en haut
@@ -24,6 +25,8 @@ export const routes: Routes = [
   { path: 'pets/add', component: PetProfilePage },
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:index', component: PetProfilePage },
+    { path: 'dashboard-sitter', component:   DashboardSitterComponent},
+
   {
     path: 'pet-profile',
     loadComponent: () => import('./pet-profile/pet-profile.page').then( m => m.PetProfilePage)

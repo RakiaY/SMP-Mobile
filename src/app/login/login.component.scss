@@ -117,20 +117,23 @@
     font-size: 24px;
     color: #1dd1a1;
   }
-  .register-text {
-    margin-top: 1px;
-    font-size: 14px;
-    color: #000;
-    margin-left: 35%;
-  }
-  
-  .register-link {
-    color: #1dd1a1;
-    font-weight: 700;
-    text-decoration: none;
-  }
-  
-  .register-link:hover {
-    text-decoration: underline;
-  }
+ .register-text {
+  margin-top: 20px; // espace suffisant sous le formulaire
+  font-size: 14px;
+  color: #000;
+  text-align: center; // centrer horizontalement
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; // petit espace entre le texte et le lien
+}
 
+.register-link {
+  color: #1dd1a1;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

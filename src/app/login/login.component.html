@@ -1,29 +1,38 @@
 <ion-content class="signup-screen" fullscreen>
   <div class="header">
     <h1>SitMypet</h1>
-  <div class="signup-container">
-    <p class="subtitle">Leur bonheur, notre priorité</p>
 
-    <div class="form-group icon-right">
-      <input type="email" placeholder="Adresse e-mail" />
-      <div class="icon-container">
-      <ion-icon name="mail-outline"></ion-icon>
-      </div>
+    <div class="signup-container">
+      <p class="subtitle">Leur bonheur, notre priorité</p>
+
+      <!-- Formulaire connecté au FormGroup -->
+      <form [formGroup]="loginForm" (ngSubmit)="submitForm()">
+
+        <div class="form-group icon-right">
+          <input type="email" placeholder="Adresse e-mail" formControlName="email" />
+          <div class="icon-container">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+        </div>
+
+        <div class="form-group icon-left">
+          <div class="icon-container">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+          </div>
+          <input type="password" placeholder="Mot de passe" formControlName="password" />
+        </div>
+
+        
+
+        <ion-button expand="block" type="submit" class="signup-button" [disabled]="loginForm.invalid">
+          Se Connecter
+        </ion-button>
+      </form>
+
+      <p class="register-text">
+        Vous n'avez pas de compte ?
+        <a routerLink="/signup" class="register-link">S'inscrire</a>
+      </p>
     </div>
-    <div class="form-group icon-left">
-      <div class="icon-container">
-        <ion-icon name="lock-closed-outline"></ion-icon>
-      </div>
-      <input type="password" placeholder="Mot de passe" />
-    </div>
-    
   </div>
-
-  <ion-button routerLink="/dashboard" expand="block" class="signup-button">Se Connecter </ion-button>
-
-  <p class="register-text">
-    Don't have an account?
-    <a routerLink="/signup" class="register-link">Register!</a>    </p>
-</div>
 </ion-content>
-
