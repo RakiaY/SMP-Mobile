@@ -4,7 +4,6 @@ import { Observable, from } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 import { Storage } from '@ionic/storage-angular';
 
-const baseUrl = "http://localhost:8000/api/";
 
 
 @Injectable({

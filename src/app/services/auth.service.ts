@@ -4,7 +4,9 @@ import { Observable, from, throwError, of } from 'rxjs';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { Storage } from '@ionic/storage-angular';
 
-const baseUrl = "http://localhost:8000/api/";
+const baseUrl = "http://localhost:8000/api/mobile/";
+//const baseUrlSitter = "http://localhost:8000/api/sitters/";
+
 
 @Injectable({
   providedIn: 'root'
@@ -95,5 +97,16 @@ export class AuthService {
     const user = await this.getCurrentUser();
     return user?.role || null;
   }
+
+ sitterRegister(petSitterData: FormData): Observable<any> {
+  return this.http.post(baseUrl + "registerpetsitter", petSitterData).pipe(
+    catchError(error => {
+      if (error.status === 422) {
+        return throwError(() => error.error.errors);
+      }
+      return throwError(() => 'Une erreur est survenue');
+    })
+  );
+}
 }
   
