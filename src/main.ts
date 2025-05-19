@@ -9,7 +9,6 @@ import { AppComponent } from './app/app.component';
 import { importProvidersFrom } from '@angular/core';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './app/interceptors/auth.interceptor';
-import { AuthService } from './app/services/auth.service';
 
 
 bootstrapApplication(AppComponent, {

@@ -44,7 +44,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   //{ path: '', redirectTo: 'login', pathMatch: 'full'},
-  { path: '**', redirectTo: '/home', pathMatch: 'full' },
+  //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
   
   {
     path: 'dashboard-sitter',
@@ -59,7 +59,12 @@ export const routes: Routes = [
   {
     path: 'pets',
     loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage),
-    canActivate: [AuthGuard]  // <-- protected route
-  }
+    //canActivate: [AuthGuard]  // <-- protected route
+  },
+  {
+  path: 'pets/add',
+  loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
+  canActivate: [AuthGuard]  // <-- protected route
+}
 
 ];

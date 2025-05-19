@@ -1,177 +1,156 @@
-<ion-toolbar class="header-toolbar">
-  <ion-buttons slot="start">
-    <ion-back-button defaultHref="/pets"></ion-back-button>
-  </ion-buttons>
-  <ion-title>Profil de l’animal</ion-title>
-</ion-toolbar>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/pets"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ajouter un animal</ion-title>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content class="pet-profile-content" fullscreen>
 
-<!-- Nom & Photo -->
-<div class="top-card">
-  <div class="name-fields">
+  <!-- Nom & Photo -->
+  <div class="top-card">
     <ion-item lines="none" class="flat-input">
-      <ion-input [(ngModel)]="pet.name" name="name" placeholder="Nom de votre animal"></ion-input>
+      <ion-input
+        [(ngModel)]="pet.name"
+        name="name"
+        placeholder="Nom de l’animal"
+        required
+        #nameInput="ngModel">
+      </ion-input>
     </ion-item>
-  </div>
-  <div class="photo-wrapper">
-    <ion-avatar class="avatar-big">
-      <img *ngIf="preview; else placeholder" [src]="preview"/>
-      <ng-template #placeholder>
-        <div class="avatar-placeholder">+</div>
-      </ng-template>
-    </ion-avatar>
-    <ion-button fill="clear" (click)="fileInput.click()">Ajouter une photo</ion-button>
-    <input #fileInput type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
-  </div>
-</div>
+    <ion-note color="danger" *ngIf="nameInput.invalid && nameInput.touched">
+      Le nom est requis.
+    </ion-note>
 
-<!-- Sélection type d’animal -->
-<div class="section-card">
-  <h3>Votre animal est un</h3>
-  <div class="grid-icons">
-    <div *ngFor="let t of types"
-         class="icon-card"
-         [class.selected]="pet.type === t.value"
-         (click)="pet.type = t.value">
-      <img 
-        [src]="'/assets/' + t.value + '.svg'" 
-        [alt]="t.label" 
-        class="icon-img" 
-      />
-
-      <p>{{ t.label }}</p>
+    <div class="photo-wrapper">
+      <ion-avatar class="avatar-big">
+        <img *ngIf="preview; else placeholder" [src]="preview" />
+        <ng-template #placeholder>
+          <div class="avatar-placeholder">+</div>
+        </ng-template>
+      </ion-avatar>
+      <ion-button fill="clear" (click)="fileInput.click()">Ajouter une photo</ion-button>
+      <input #fileInput type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
     </div>
   </div>
-  <ion-item *ngIf="pet.type === 'autre'" lines="full"  class="other-select">
-    <ion-label position="stacked">Précisez</ion-label>
-    <ion-select
-      interface="popover"
-      [(ngModel)]="petTypeOther"
-      name="petTypeOther"
-      placeholder="Sélectionnez un autre">
-      <ion-select-option *ngFor="let o of otherTypes" [value]="o">
-        {{ o }}
-      </ion-select-option>
+
+  <!-- Type -->
+  <div class="section-card">
+    <h3>Type d’animal</h3>
+    <div class="grid-icons">
+      <div *ngFor="let t of types"
+           class="icon-card"
+           [class.selected]="pet.type === t.value"
+           (click)="pet.type = t.value">
+        <img [src]="'/assets/' + t.value + '.svg'" [alt]="t.label" class="icon-img" />
+        <p>{{ t.label }}</p>
+      </div>
+    </div>
+
+    <ion-item *ngIf="pet.type === 'autre'" lines="full">
+      <ion-label position="stacked">Précisez</ion-label>
+      <ion-select [(ngModel)]="petTypeOther" placeholder="Type d’animal">
+        <ion-select-option *ngFor="let o of otherTypes" [value]="o">{{ o }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <!-- Race -->
+  <ion-item *ngIf="pet.type">
+    <ion-label position="stacked">Race</ion-label>
+    <ion-select [(ngModel)]="pet.breed" placeholder="Sélectionnez une race">
+      <ion-select-option *ngFor="let breed of getBreeds()" [value]="breed">{{ breed }}</ion-select-option>
     </ion-select>
   </ion-item>
-</div>
 
-
-<ion-item *ngIf="pet.type">
-  <ion-label position="stacked">Race</ion-label>
-  <ion-select
-    interface="popover"
-    [(ngModel)]="pet.breed"
-    placeholder="Sélectionnez une race"
-    class="custom-select"
-  >
-    <ion-select-option *ngFor="let breed of getBreeds()" [value]="breed">
-      {{ breed }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
-
-
-
-<div class="section-card">
-  <h3>Dressé</h3>
-  <ion-range min="0" max="2" step="1" [(ngModel)]="pet.training" snaps="true">
-    <ion-icon slot="start" name="walk-outline"></ion-icon>
-    <ion-icon slot="end" name="school-outline"></ion-icon>
-  </ion-range>
-</div>
-
-<!-- Taille-->
-<div class="section-card">
-  <h3>Taille</h3>
-  <ion-segment [(ngModel)]="pet.size" name="size" class="size-segment">
-    <ion-segment-button value="small">
-      Petite
-    </ion-segment-button>
-    <ion-segment-button value="medium">
-      Moyenne
-    </ion-segment-button>
-    <ion-segment-button value="large">
-      Grande
-    </ion-segment-button>
-  </ion-segment>
-</div>
- 
-<!-- Genre, âge, poids, race -->
-<div class="section-card">
-  <h3>Genre</h3>
-<ion-segment [(ngModel)]="pet.gender" class="gender-segment">
-<ion-segment-button value="m">
-  <ion-icon name="male-outline"></ion-icon>
-  Mâle
-</ion-segment-button>
-<ion-segment-button value="f">
-  <ion-icon name="female-outline"></ion-icon>
-  Femelle
-</ion-segment-button>
-</ion-segment>
-
-<h3>Date de naissance</h3>
-<ion-item class="date-item">
-  <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-    <ion-datetime
-      [(ngModel)]="pet.birth_date"
-      displayFormat="DD/MM/YYYY"
-      placeholder="JJ/MM/AAAA"
-      style="background: transparent; border: none;"
-     >
-    </ion-datetime>
-    <ion-icon
-      slot="end"
-      name="calendar-outline"
-      class="date-icon">
-    </ion-icon>
+  <!-- Dressage -->
+  <div class="section-card">
+    <h3>Niveau de dressage</h3>
+    <ion-range min="0" max="2" step="1" snaps="true" [(ngModel)]="pet.training">
+      <ion-icon slot="start" name="walk-outline"></ion-icon>
+      <ion-icon slot="end" name="school-outline"></ion-icon>
+    </ion-range>
   </div>
-</ion-item>
 
-
-  <h3>Poids (kg)</h3>
-  <ion-item lines="none" class="flat-input">
-    <ion-input type="number" [(ngModel)]="pet.weight" name="weight" placeholder="Poids"></ion-input>
-    <span slot="end">kg</span>
-  </ion-item>
-
-
-<!-- Vaccination -->
-<div class="section-card">
-<h3>Vaccination</h3>
-<div class="grid-icons small">
-  <div *ngFor="let v of vaccOptions"
-       class="icon-card"
-       [class.selected]="pet.is_vaccinated === v.value"
-       (click)="pet.is_vaccinated = v.value">
-    <img
-      [src]="'/assets/' + v.icon"
-      [alt]="v.label"
-      class="icon-img" />
-    <p>{{ v.label }}</p>
+  <!-- Taille -->
+  <div class="section-card">
+    <h3>Taille</h3>
+    <ion-segment [(ngModel)]="pet.size">
+      <ion-segment-button value="small">Petite</ion-segment-button>
+      <ion-segment-button value="medium">Moyenne</ion-segment-button>
+      <ion-segment-button value="large">Grande</ion-segment-button>
+    </ion-segment>
   </div>
-</div>
-</div>
-<!-- Maladie contagieuse -->
-<div class="section-card">
-<h3>Maladie contagieuse</h3>
-<div class="grid-icons small">
-  <div *ngFor="let d of diseaseOptions"
-       class="icon-card"
-       [class.selected]="pet.has_contagious_disease === d.value"
-       (click)="pet.has_contagious_disease = d.value">
-    <img [src]="'/assets/' + d.icon" [alt]="d.label" class="icon-img" />
-    <p>{{ d.label }}</p>
+
+  <!-- Genre / Date / Poids -->
+  <div class="section-card">
+    <h3>Genre</h3>
+    <ion-segment [(ngModel)]="pet.gender">
+      <ion-segment-button value="m">
+        <ion-icon name="male-outline"></ion-icon> Mâle
+      </ion-segment-button>
+      <ion-segment-button value="f">
+        <ion-icon name="female-outline"></ion-icon> Femelle
+      </ion-segment-button>
+    </ion-segment>
+
+    <h3>Date de naissance</h3>
+    <ion-item>
+      <ion-datetime
+        [(ngModel)]="pet.birth_date"
+        displayFormat="DD/MM/YYYY"
+        placeholder="JJ/MM/AAAA">
+      </ion-datetime>
+    </ion-item>
+
+    <h3>Poids (kg)</h3>
+    <ion-item lines="none">
+      <ion-input
+        type="number"
+        [(ngModel)]="pet.weight"
+        name="weight"
+        placeholder="Poids"
+        required
+        #weightInput="ngModel">
+      </ion-input>
+      <span slot="end">kg</span>
+    </ion-item>
+    <ion-note color="danger" *ngIf="weightInput.invalid && weightInput.touched">
+      Le poids est requis.
+    </ion-note>
   </div>
-</div>
-</div>
 
-<h3>Album</h3>
+  <!-- Vaccination -->
+  <div class="section-card">
+    <h3>Vaccination</h3>
+    <div class="grid-icons small">
+      <div *ngFor="let v of vaccOptions"
+           class="icon-card"
+           [class.selected]="pet.is_vaccinated === v.value"
+           (click)="pet.is_vaccinated = v.value">
+        <img [src]="'/assets/' + v.icon" class="icon-img" />
+        <p>{{ v.label }}</p>
+      </div>
+    </div>
+  </div>
 
-<ion-item lines="none" class="flat-input">
-  <ion-button fill="clear" (click)="fileInput.click()">Ajouter une photo</ion-button>
-</ion-item>
-<!-- Enregistrer -->
-<ion-button expand="block" class="save-btn" (click)="savePet()">Enregistrer</ion-button>
+  <!-- Maladie -->
+  <div class="section-card">
+    <h3>Maladie contagieuse</h3>
+    <div class="grid-icons small">
+      <div *ngFor="let d of diseaseOptions"
+           class="icon-card"
+           [class.selected]="pet.has_contagious_disease === d.value"
+           (click)="pet.has_contagious_disease = d.value">
+        <img [src]="'/assets/' + d.icon" class="icon-img" />
+        <p>{{ d.label }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enregistrer -->
+  <ion-button expand="block" class="save-btn" (click)="savePet()">Enregistrer</ion-button>
+
+</ion-content>
