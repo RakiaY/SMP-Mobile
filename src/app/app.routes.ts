@@ -44,6 +44,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   //{ path: '', redirectTo: 'login', pathMatch: 'full'},
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
+  
   {
     path: 'dashboard-sitter',
     loadComponent: () => import('./dashboard-sitter/dashboard-sitter.component').then(m => m.DashboardSitterComponent),

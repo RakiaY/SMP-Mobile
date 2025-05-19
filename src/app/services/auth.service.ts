@@ -4,7 +4,7 @@ import { Observable, from, throwError, of } from 'rxjs';
 import { tap, switchMap, catchError } from 'rxjs/operators';
 import { Storage } from '@ionic/storage-angular';
 
-const baseUrl = "http://localhost:8000/api/mobile/";
+const baseUrl = "http://localhost:8000/api/";
 //const baseUrlSitter = "http://localhost:8000/api/sitters/";
 
 
