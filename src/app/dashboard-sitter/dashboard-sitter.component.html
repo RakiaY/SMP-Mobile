@@ -1,3 +1,98 @@
-<p>
-  dashboard-sitter sera bientot Implemente
-</p>
+<ion-header class="custom-header">
+  <div class="header-top">
+    <h2>Bienvenue <ion-icon name="paw-outline"></ion-icon></h2>
+    <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+  </div>
+  <div class="welcome-banner">
+    <h1>SitMyPet</h1>
+    <p>Votre compagnon est entre de bonnes mains.</p>
+  </div>
+</ion-header>
+
+<ion-content class="dashboard-content" fullscreen>
+  <!-- Pet-Owner Requests -->
+  <div class="forum-section">
+    <div class="section-header">
+      <h3>Demandes de garde</h3>
+    </div>
+
+    <!-- Loop over each request -->
+    <ng-container *ngFor="let req of petOwnerRequests">
+      <div class="request-card">
+        <!-- owner icon -->
+        <ion-icon
+          class="owner-icon"
+          name="person-circle-outline"
+          (click)="viewOwner(req)"
+        ></ion-icon>
+
+        <!-- owner name -->
+        <div class="owner-name" (click)="viewOwner(req)">
+          {{ req.ownerName }}
+        </div>
+
+        <!-- right‐side icon column -->
+        <div class="action-icons">
+          <ion-icon
+            class="pet-icon"
+            name="paw-outline"
+            [ngClass]="{ active: req.petted }"
+            (click)="viewPet(req); req.petted = !req.petted"
+          ></ion-icon>
+          <ion-icon
+            class="like-icon"
+            name="heart"
+            [ngClass]="{ liked: req.liked }"
+            (click)="toggleLike(req)"
+          ></ion-icon>
+        </div>
+
+        <!-- Request details -->
+        
+        <div class="owner-detail">
+          <strong>Animal :</strong> {{ req.animalName }} ({{ req.species }})
+        </div>
+        <div class="owner-detail">
+          <strong>Adresse :</strong> {{ req.address }}
+        </div>
+        <div class="owner-detail">
+          <strong>Type de garde :</strong> {{ req.careType }}
+        </div>
+        <div class="owner-detail">
+          <strong>Durée :</strong> {{ req.duration }}
+        </div>
+        <div class="owner-detail">
+          <strong>Prix :</strong>
+          {{ req.price | currency:'EUR':'symbol' }}
+        </div>
+        <div class="owner-detail">
+          <strong>Période :</strong>
+          {{ req.startDate | date:'dd/MM/yyyy' }} –
+          {{ req.endDate | date:'dd/MM/yyyy' }}
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- footer… -->
+  <ion-footer class="custom-footer">
+    <ion-toolbar>
+      <ion-tabs>
+        <ion-tab-bar slot="bottom">
+          <ion-tab-button tab="home">
+            <ion-icon name="home-outline" (click)="navigateTo('/dashboard-sitter')"></ion-icon>
+          </ion-tab-button>
+          <ion-tab-button tab="search" (click)="navigateTo('/find-sitter')">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </ion-tab-button>
+          <ion-tab-button tab="add" (click)="navigateTo('/pets')">
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-tab-button>
+          <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
+            <ion-icon name="person-outline"></ion-icon>
+          </ion-tab-button>
+        </ion-tab-bar>
+      </ion-tabs>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

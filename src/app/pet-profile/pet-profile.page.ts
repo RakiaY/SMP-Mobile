@@ -52,13 +52,13 @@ export class PetProfilePage implements OnInit {
   };
 
   vaccOptions = [
-    { value: true, label: 'Vacciné', icon: 'vacciné.svg' },
-    { value: false, label: 'Non vacciné', icon: 'non_vacciné.svg' },
+    { value: 1, label: 'Vacciné', icon: 'vacciné.svg' },
+    { value: 0, label: 'Non vacciné', icon: 'non_vacciné.svg' },
   ];
 
   diseaseOptions = [
-    { value: true, label: 'Oui', icon: 'contagious-yes.svg' },
-    { value: false, label: 'Non', icon: 'contagious-no.svg' },
+    { value: 1, label: 'Oui', icon: 'contagious-yes.svg' },
+    { value: 0, label: 'Non', icon: 'contagious-no.svg' },
   ];
 
   preview: string | null = null;
@@ -106,6 +106,9 @@ export class PetProfilePage implements OnInit {
     }
 
     const formData = new FormData();
+    const petOwnerId = currentUser.id;
+    console.log('▶️ Sending pet_owner_id =', petOwnerId);
+    formData.append('pet_owner_id', petOwnerId.toString());
     formData.append('name', this.pet.name || '');
     formData.append('type', this.pet.type || '');
 

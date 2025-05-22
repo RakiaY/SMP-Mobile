@@ -16,21 +16,20 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return from(this.storage.get('auth_token')).pipe(
       switchMap(token => {
-        console.log('🔐 Interceptor token:', token); // 👈 Log the token being used
+        const isForm = req.body instanceof FormData;
 
-        if (token) {
-          const cloned = req.clone({
-            setHeaders: {
-              Authorization: `Bearer ${token}`
-            }
-          });
+        const headersConfig: Record<string,string> = {
+          'Accept': 'application/json',
+          Authorization: token ? `Bearer ${token}` : ''
+        };
 
-          console.log('➡️ Request with auth header:', cloned); // 👈 Log the final request
-          return next.handle(cloned);
+        // only set JSON Content-Type if NOT a FormData
+        if (!isForm) {
+          headersConfig['Content-Type'] = 'application/json';
         }
 
-        console.warn('🚫 No token found in storage.');
-        return next.handle(req);
+        const cloned = req.clone({ setHeaders: headersConfig });
+        return next.handle(cloned);
       })
     );
   }

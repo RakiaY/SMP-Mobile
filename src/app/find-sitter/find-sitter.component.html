@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Trouver un gardien</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="find-sitter-content" fullscreen>
+  <!-- Search bar -->
+  <div class="search-container">
+    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="filterSitters()" placeholder="Rechercher un gardien" animated></ion-searchbar>
+    
+    <ion-button fill="clear" size="small" (click)="resetFilters()" *ngIf="searchTerm || selectedFilters.services.length || selectedFilters.availability.length || selectedFilters.rating">
+      Réinitialiser
+    </ion-button>
+  </div>
+  
+  <!-- Filters -->
+  <ion-segment scrollable class="filter-segment">
+    <ion-segment-button value="services">
+      Services
+    </ion-segment-button>
+    <ion-segment-button value="availability">
+      Disponibilité
+    </ion-segment-button>
+    <ion-segment-button value="rating">
+      Évaluation
+    </ion-segment-button>
+    <ion-segment-button value="price">
+      Prix
+    </ion-segment-button>
+  </ion-segment>
+  
+  <!-- Sitters list -->
+  <div class="sitters-container">
+    <ion-spinner *ngIf="loading" class="spinner"></ion-spinner>
+    
+    <ng-container *ngIf="!loading">
+      <div *ngIf="filteredSitters.length === 0" class="no-results">
+        <ion-icon name="search-outline"></ion-icon>
+        <p>Aucun gardien trouvé</p>
+        <ion-button (click)="resetFilters()" fill="clear">Réinitialiser les filtres</ion-button>
+      </div>
+      
+      <ion-card *ngFor="let sitter of filteredSitters" class="sitter-card">
+        <div class="sitter-header">
+          <ion-avatar>
+            <img [src]="sitter.photo" alt="{{ sitter.name }}">
+          </ion-avatar>
+          <div class="sitter-info">
+            <h3>{{ sitter.name }}</h3>
+            <div class="rating">
+              <ion-icon name="star"></ion-icon>
+              <span>{{ sitter.rating }} ({{ sitter.reviews }})</span>
+            </div>
+          </div>
+          <div class="distance">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{ sitter.distance }} km</span>
+          </div>
+        </div>
+        
+        <div class="sitter-details">
+          <div class="services">
+            <ion-chip *ngFor="let service of sitter.services">{{ service }}</ion-chip>
+          </div>
+          
+          <div class="availability">
+            <ion-chip *ngFor="let time of sitter.availability" outline>{{ time }}</ion-chip>
+          </div>
+          
+          <div class="price">
+            <span class="amount">{{ sitter.price }}€</span>
+            <span class="unit">/ heure</span>
+          </div>
+        </div>
+        
+        <div class="sitter-actions">
+          <ion-button expand="block" [routerLink]="['/sitter-profile', sitter.id]">
+            Voir le profil
+          </ion-button>
+          <ion-button expand="block" fill="outline" [routerLink]="['/booking/create', sitter.id]">
+            Réserver
+          </ion-button>
+        </div>
+      </ion-card>
+    </ng-container>
+  </div>
+</ion-content>

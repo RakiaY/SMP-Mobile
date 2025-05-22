@@ -29,7 +29,14 @@ export const routes: Routes = [
   { path: 'pets/edit/:index', component: PetProfilePage },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
 
+  { path: '', redirectTo: 'splash', pathMatch: 'full'},
+  //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
+
   {
+    path: 'splash',
+    loadComponent: () => import('./splash/splash.component').then(m => m.SplashComponent)
+  },
+{
     path: 'home',
     loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
   },
@@ -39,16 +46,33 @@ export const routes: Routes = [
     canActivate: [LogoutGuard]
   },
   {
+    path: 'signup',
+    loadComponent: () => import('./signup/signup.component').then(m => m.SignupComponent),
+    canActivate: [LogoutGuard]
+  },
+  {
+    path: 'owner-form',
+    loadComponent: () => import('./owner-form/owner-form.component').then(m => m.OwnerFormComponent),
+    canActivate: [LogoutGuard]
+  },
+  {
+    path: 'sitter-form',
+    loadComponent: () => import('./guardian-form/guardian-form.component').then(m => m.GuardianFormComponent),
+    canActivate: [LogoutGuard]
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [AuthGuard]
   },
-  //{ path: '', redirectTo: 'login', pathMatch: 'full'},
-  //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
-  
   {
     path: 'dashboard-sitter',
     loadComponent: () => import('./dashboard-sitter/dashboard-sitter.component').then(m => m.DashboardSitterComponent),
+    canActivate: [AuthGuard]  // <-- protected route
+  },
+  {
+    path: 'find-sitter',
+    loadComponent: () => import('./find-sitter/find-sitter.component').then(m => m.FindSitterComponent),
     canActivate: [AuthGuard]  // <-- protected route
   },
   {
@@ -59,7 +83,7 @@ export const routes: Routes = [
   {
     path: 'pets',
     loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage),
-    //canActivate: [AuthGuard]  // <-- protected route
+    canActivate: [AuthGuard]  // <-- protected route
   },
   {
   path: 'pets/add',
