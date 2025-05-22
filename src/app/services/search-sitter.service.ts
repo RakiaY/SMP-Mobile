@@ -34,24 +34,30 @@ export class SearchSitterService {
     return this.http
       .get<ApiResponse>(`${this.baseUrl}/SearchSitter`)
       .pipe(
-        tap(resp => console.log('🔍 API returned:', resp)),
-        map(resp =>
-          (resp.Searchs || []).map(raw => ({
+        map(resp => {
+          const seen = new Set<number>();
+          const uniq = (resp.Searchs || []).filter(r => {
+            if (seen.has(r.id)) return false;
+            seen.add(r.id);
+            return true;
+          });
+          return uniq.map(raw => ({
             ownerId:    raw.user_id,
             petId:      raw.pet_id,
             ownerName:  raw.user_name,
             animalName: raw.pet_name,
-            species:    raw.pet_type ?? '—',
+            // <<<< here, force a string
+            species:    raw.pet_type ?? '',
             address:    raw.adresse,
-            careType:   raw.care_type,       // now exactly the API value
+            careType:   raw.care_type,
             duration:   raw.care_duration,
             startDate:  new Date(raw.start_date),
             endDate:    new Date(raw.end_date),
             price:      raw.remunerationMin,
             liked:      false,
             petted:     false,
-          }))
-        )
+          }));
+        })
       );
   }
 }
