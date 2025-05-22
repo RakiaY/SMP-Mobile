@@ -1,85 +1,44 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { IonicModule }   from '@ionic/angular';
+import { CommonModule }  from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule, Router } from '@angular/router';
 
-interface PetOwnerRequest {
-  ownerId: number;
-  petId: number;
-  price: number;
-  ownerName: string;
-  animalName: string;
-  species: string;
-  address: string;
-  careType: 'chez_proprietaire' | 'chez_garde';
-  duration: string;
-  startDate: Date;
-  endDate: Date;
-  liked: boolean;
-  petted: boolean;
-}
+import { SearchSitterService } from '../services/search-sitter.service';
+import { PetOwnerRequest }     from '../models/pet-owner-request.model';
 
 @Component({
   selector: 'app-dashboard-sitter',
   standalone: true,
-  imports: [IonicModule, CommonModule],
+  imports: [
+    IonicModule,
+    CommonModule,
+    HttpClientModule,
+    RouterModule
+  ],
   templateUrl: './dashboard-sitter.component.html',
   styleUrls: ['./dashboard-sitter.component.scss'],
 })
 export class DashboardSitterComponent implements OnInit {
   petOwnerRequests: PetOwnerRequest[] = [];
+  loading = true;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private searchService: SearchSitterService
+  ) {}
 
-  ngOnInit() {
-    this.petOwnerRequests = [
-      {
-        ownerId: 1,
-        petId: 42,
-        ownerName: 'khelifa Hamza',
-        animalName: 'Maya',
-        species: 'Chien',
-        address: 'Avenue Boutroux, Paris, France',
-        careType: 'chez_proprietaire',
-        duration: '5 jours',
-        price: 50,
-        startDate: new Date(2025, 4, 25),
-        endDate: new Date(2025, 4, 30),
-        liked: false,
-        petted: false
+  ngOnInit(): void {
+    this.searchService.getRequests().subscribe({
+      next: (list) => {
+        this.petOwnerRequests = list;
+        this.loading = false;
       },
-      {
-        ownerId: 1,
-        petId: 42,
-        ownerName: 'khelifa Hamza',
-        animalName: 'Maya',
-        species: 'Chien',
-        address: 'Avenue Boutroux, Paris, France',
-        careType: 'chez_proprietaire',
-        duration: '5 jours',
-        price: 50,
-        startDate: new Date(2025, 4, 25),
-        endDate: new Date(2025, 4, 30),
-        liked: false,
-        petted: false
-      },
-      {
-        ownerId: 1,
-        petId: 42,
-        ownerName: 'khelifa Hamza',
-        animalName: 'Maya',
-        species: 'Chien',
-        address: 'Avenue Boutroux, Paris, France',
-        careType: 'chez_proprietaire',
-        duration: '5 jours',
-        price: 50,
-        startDate: new Date(2025, 4, 25),
-        endDate: new Date(2025, 4, 30),
-        liked: false,
-        petted: false
-      },
-      // … add more requests as needed …
-    ];
+      error: err => {
+        console.error('Could not load sitter requests', err);
+        this.loading = false;
+      }
+    });
   }
 
   viewOwner(req: PetOwnerRequest) {
@@ -87,18 +46,20 @@ export class DashboardSitterComponent implements OnInit {
   }
 
   viewPet(req: PetOwnerRequest) {
-    // toggle 'petted' to color the icon
     req.petted = !req.petted;
     this.router.navigate(['/pet-profile', req.petId]);
   }
 
   toggleLike(req: PetOwnerRequest) {
     req.liked = !req.liked;
-    // TODO: hook into your notification/chat service
-    console.log(`Request ${req.petId} liked?`, req.liked);
+    // you can post back to server if you like…
   }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
+  }
+
+  getStatusColor(status: boolean) {
+    return status ? 'success' : 'medium';
   }
 }
