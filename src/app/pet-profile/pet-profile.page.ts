@@ -22,34 +22,128 @@ export class PetProfilePage implements OnInit {
     name: '',
     type: '',
     breed: '',
-    size: '',
     gender: '',
     birth_date: '',
     weight: null,
-    training: 1,
     is_vaccinated: null,
     has_contagious_disease: null,
+    has_medical_file: null,
+    is_critical_condition: null,
+    photo_profil: null,
   };
-
-  types = [
-    { value: 'dog', label: 'Chien' },
-    { value: 'cat', label: 'Chat' },
-    { value: 'rabbit', label: 'Lapin' },
-    { value: 'bird', label: 'Oiseau' },
-    { value: 'fish', label: 'Poisson' },
-    { value: 'autre', label: 'Autre' },
-  ];
-
-  otherTypes = ['Hamster', 'Cobaye', 'Furet', 'Perroquet', 'Tortue', 'Chinchilla'];
+    photo_profil: File | null = null;
 
   animalBreeds: { [key: string]: string[] } = {
-    dog: ['Labrador', 'Golden Retriever', 'Bulldog', 'Beagle'],
-    cat: ['Siamois', 'Persan', 'Bengal', 'Maine Coon'],
-    rabbit: ['Nain', 'Angora', 'Himalaya'],
-    bird: ['Perroquet', 'Canari', 'Perruche'],
-    fish: ['Guppy', 'Betta', 'Goldfish'],
-    autre: this.otherTypes,
-  };
+  'Chien': [
+    'Labrador',
+    'Berger Allemand',
+    'Bulldog',
+    'Golden Retriever',
+    'Beagle',
+    'Caniche',
+    'Husky',
+    'Shih Tzu'
+  ],
+  'Chat': [
+    'Siamois',
+    'Persan',
+    'Maine Coon',
+    'Bengal',
+    'Sphynx',
+    'Ragdoll'
+  ],
+  'Lapin': [
+    'Holland Lop',
+    'Netherland Dwarf',
+    'Angora',
+    'Rex'
+  ],
+  'Oiseau': [
+    'Perruche',
+    'Canari',
+    'Calopsitte',
+    'Perroquet'
+  ],
+  'Poisson': [
+    'Poisson rouge',
+    'Combattant',
+    'Guppy',
+    'Scalaire'
+  ],
+  
+  'Autre': [
+    // Cobaye
+    'Abyssin',
+    'Angora',
+    'Péruvien',
+    'Texel',
+    'Rex',
+
+    // Furet
+    'Albinos',
+    'Zibeline',
+    'Champagne',
+    'Angora',
+
+    // Perroquet
+    'Gris du Gabon',
+    'Ara bleu',
+    'Perruche ondulée',
+    'Pionus',
+    'Caique',
+
+    // Tortue
+    'de Hermann',
+    'étoilée',
+    'sulcata',
+    'boîte d’eau',
+
+    // Serpent
+    'Python royal',
+    'Couleuvre cornue',
+    'Boa constrictor',
+    'Couleuvre de Rat',
+    'Couleuvre royale',
+
+    // Chinchilla
+    'Standard',
+    'White mosaic',
+    'Ebony',
+    'Sapphire',
+    'Violet',
+
+    // Souris
+    'Fancy mouse',
+    'Black mouse',
+    'Golden mouse',
+    'Dalmatian mouse'
+  ]
+};
+
+filteredBreeds: string[] = [];
+onTypeChange(type: string) {
+  this.filteredBreeds = this.animalBreeds[type] || [];
+  this.pet.breed = ''; // Réinitialiser la race
+}
+  types = [
+    { value: 'Chien',     label: 'Chien'   },
+    { value: 'Chat',     label: 'Chat'    },
+    { value: 'Lapin',  label: 'Lapin'   },
+    { value: 'Oiseau',  label: 'Oiseau' },
+    { value: 'Poisson',    label: 'Poisson' },
+    { value: 'Autre',  label: 'Autre'  },
+  
+  ];
+  otherTypes = [
+    'Cobaye',
+    'Furet',
+    'Perroquet',
+    'Tortue',
+    'Serpent',
+    'Chinchilla',
+    'Souris',
+  ];
+
 
   vaccOptions = [
     { value: 1, label: 'Vacciné', icon: 'vacciné.svg' },
@@ -60,7 +154,14 @@ export class PetProfilePage implements OnInit {
     { value: 1, label: 'Oui', icon: 'contagious-yes.svg' },
     { value: 0, label: 'Non', icon: 'contagious-no.svg' },
   ];
-
+  medicalFolder = [
+    { value: 1, label: 'Oui', icon: 'medicalFolder.png' },
+    { value: 0, label: 'Non', icon: 'medicalFolder-no.png' },
+  ];
+criticalCondition = [
+    { value: 1, label: 'Oui', icon: 'Critical-Yes.jpg' },
+    { value: 0, label: 'Non', icon: 'Critical-no.jpg' },
+  ];
   preview: string | null = null;
   photoFile: File | null = null;
   albumPhotos: File[] = [];
@@ -77,19 +178,20 @@ export class PetProfilePage implements OnInit {
     await this.storage.create();
   }
 
-  getBreeds(): string[] {
-    return this.pet.type ? this.animalBreeds[this.pet.type] || [] : [];
-  }
-
-  onPhotoSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.photoFile = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => (this.preview = reader.result as string);
-      reader.readAsDataURL(this.photoFile);
+ 
+getBreeds() {
+      if (this.pet.type === undefined) {
+        return [];
+      }
+      return this.animalBreeds[this.pet.type] || [];
     }
+    
+  onPhotoSelected(event: any): void {
+  const file = event.target.files[0];
+  if (file) {
+    this.photo_profil = file;
   }
+}
 
   onAlbumPhotosSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -119,18 +221,21 @@ export class PetProfilePage implements OnInit {
     formData.append('breed', this.pet.breed || '');
     formData.append('size', this.pet.size || '');
     formData.append('gender', this.pet.gender || '');
-    formData.append('birth_date', this.pet.birth_date || '');
+formData.append('birth_date', this.formatDateToYMD(this.pet.birth_date));
     formData.append('weight', this.pet.weight?.toString() || '');
     formData.append('training', this.pet.training?.toString() || '');
     formData.append('is_vaccinated', String(this.pet.is_vaccinated));
     formData.append('has_contagious_diseases', String(this.pet.has_contagious_disease));
+    formData.append('has_medical_file', String(this.pet.has_medical_file));
+    formData.append('is_critical_condition', String(this.pet.is_critical_condition));
 
-    if (this.photoFile) {
-    formData.append('media[]', this.photoFile); // ✅ matches backend
-    }
+    if (this.photo_profil) {
+    formData.append('photo_profil', this.photo_profil);
+  }
     this.albumPhotos.forEach((file) => {
       formData.append('media[]', file); // ✅ repeat for each album image
     });
+
 
     this.petService.addPet(formData).subscribe({
       next: () => {
@@ -153,4 +258,26 @@ export class PetProfilePage implements OnInit {
     });
     await toast.present();
   }
+  formatDateToYMD(date: Date | string): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+  birthDate: string = '';           
+  birthDateValue: string = '';      
+  showDatePicker: boolean = false; 
+  onDateSelected(event: any) {
+  this.pet.birth_date = event.detail.value;
+  this.showDatePicker = false;
+}
+
+// Pour afficher une date formatée dans le champ
+formatDate(date: string): string {
+  if (!date) return '';
+  const d = new Date(date);
+  return d.toLocaleDateString(); // ou d.toISOString().slice(0, 10)
+}
 }

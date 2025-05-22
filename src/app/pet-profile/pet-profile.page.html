@@ -38,46 +38,50 @@
 
   <!-- Type -->
   <div class="section-card">
-    <h3>Type d’animal</h3>
-    <div class="grid-icons">
-      <div *ngFor="let t of types"
-           class="icon-card"
-           [class.selected]="pet.type === t.value"
-           (click)="pet.type = t.value">
-        <img [src]="'/assets/' + t.value + '.svg'" [alt]="t.label" class="icon-img" />
-        <p>{{ t.label }}</p>
-      </div>
-    </div>
+    <h3>Votre animal est un</h3>
+            <div class="grid-icons">
+              <div *ngFor="let t of types"
+                   class="icon-card"
+                   [class.selected]="pet.type === t.value"
+                   (click)="pet.type = t.value">
+                <img [src]="'/assets/' + t.value + '.svg'" [alt]="t.label" class="icon-img" />
+                <p>{{ t.label }}</p>
+              </div>
+            </div>
+            <ion-item *ngIf="pet.type === 'Autre'" lines="full" class="other-select">
+              <ion-label position="stacked">Précisez</ion-label>
+              <ion-select
+                interface="popover"
+                [(ngModel)]="petTypeOther"
+                name="petTypeOther"
+                placeholder="Sélectionnez un autre">
+                <ion-select-option *ngFor="let o of otherTypes" [value]="o">
+                  {{ o }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
 
-    <ion-item *ngIf="pet.type === 'autre'" lines="full">
-      <ion-label position="stacked">Précisez</ion-label>
-      <ion-select [(ngModel)]="petTypeOther" placeholder="Type d’animal">
-        <ion-select-option *ngFor="let o of otherTypes" [value]="o">{{ o }}</ion-select-option>
-      </ion-select>
-    </ion-item>
-  </div>
-
-  <!-- Race -->
-  <ion-item *ngIf="pet.type">
-    <ion-label position="stacked">Race</ion-label>
-    <ion-select [(ngModel)]="pet.breed" placeholder="Sélectionnez une race">
-      <ion-select-option *ngFor="let breed of getBreeds()" [value]="breed">{{ breed }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <!-- Dressage -->
-  <div class="section-card">
-    <h3>Niveau de dressage</h3>
-    <ion-range min="0" max="2" step="1" snaps="true" [(ngModel)]="pet.training">
-      <ion-icon slot="start" name="walk-outline"></ion-icon>
-      <ion-icon slot="end" name="school-outline"></ion-icon>
-    </ion-range>
-  </div>
+          <!-- Race -->
+          <ion-item *ngIf="pet.type" lines="full">
+            <ion-label position="stacked">Race</ion-label>
+            <ion-select
+              interface="popover"
+              [(ngModel)]="pet.breed"
+              name="breed"
+              placeholder="Sélectionnez une race"
+              class="custom-select"
+            >
+              <ion-select-option *ngFor="let breed of getBreeds()" [value]="breed">
+                {{ breed }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
 
   <!-- Taille -->
   <div class="section-card">
     <h3>Taille</h3>
-    <ion-segment [(ngModel)]="pet.size">
+    <ion-segment >
       <ion-segment-button value="small">Petite</ion-segment-button>
       <ion-segment-button value="medium">Moyenne</ion-segment-button>
       <ion-segment-button value="large">Grande</ion-segment-button>
@@ -88,22 +92,49 @@
   <div class="section-card">
     <h3>Genre</h3>
     <ion-segment [(ngModel)]="pet.gender">
-      <ion-segment-button value="m">
+      <ion-segment-button value="Male">
         <ion-icon name="male-outline"></ion-icon> Mâle
       </ion-segment-button>
-      <ion-segment-button value="f">
+      <ion-segment-button value="Female">
         <ion-icon name="female-outline"></ion-icon> Femelle
       </ion-segment-button>
+      <ion-segment-button value="Sterilized">
+    <ion-icon name="medical-outline"></ion-icon>
+    Stérilisé(e)
+  </ion-segment-button>
+      
     </ion-segment>
 
     <h3>Date de naissance</h3>
-    <ion-item>
-      <ion-datetime
-        [(ngModel)]="pet.birth_date"
-        displayFormat="DD/MM/YYYY"
-        placeholder="JJ/MM/AAAA">
-      </ion-datetime>
-    </ion-item>
+          <ion-item class="date-item" lines="full" (click)="showDatePicker = true">
+             <input
+    type="text"
+    readonly
+    [value]="formatDate(pet.birth_date)"
+    placeholder="Date de naissance"
+  />
+            <ion-icon slot="end" name="calendar-outline" class="date-icon"></ion-icon>
+          </ion-item>
+          
+<!-- Popover avec le datepicker -->
+<ion-popover
+  *ngIf="showDatePicker"
+  [isOpen]="showDatePicker"
+  (didDismiss)="showDatePicker = false"
+>
+  <ng-template>
+    <ion-datetime
+      interface="modal"
+
+      presentation="date"
+      [value]="pet.birth_date"
+      (ionChange)="onDateSelected($event)"
+      cancel-text="Annuler"
+      done-text="OK"
+    ></ion-datetime>
+  </ng-template>
+</ion-popover>
+
 
     <h3>Poids (kg)</h3>
     <ion-item lines="none">
@@ -149,6 +180,38 @@
       </div>
     </div>
   </div>
+  <div class="section-card">
+    <h3> Posséde t-il un Dosiier Medical Complet?</h3>
+    <div class="grid-icons small">
+      <div *ngFor="let d of medicalFolder"
+           class="icon-card"
+           [class.selected]="pet.has_medical_file === d.value"
+           (click)="pet.has_medical_file = d.value">
+        <img [src]="'/assets/' + d.icon" class="icon-img" />
+        <p>{{ d.label }}</p>
+      </div>
+    </div>
+  </div>
+   <div class="section-card">
+  <h3> Possède t-il un état de santé critique ?</h3>
+  <div class="grid-icons small">
+    <div *ngFor="let d of criticalCondition"
+         class="icon-card"
+         [class.selected]="pet.is_critical_condition === d.value"
+         (click)="pet.is_critical_condition = d.value">
+      
+      <!-- on agrandit simplement ici -->
+      <img 
+        [src]="'/assets/' + d.icon"
+        style="width: 150px; height: 100px;" 
+        alt="{{ d.label }}"
+      />
+      
+      <p>{{ d.label }}</p>
+    </div>
+  </div>
+</div>
+
 
   <!-- Enregistrer -->
   <ion-button expand="block" class="save-btn" (click)="savePet()">Enregistrer</ion-button>
