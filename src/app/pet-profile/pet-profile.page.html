@@ -25,15 +25,19 @@
     </ion-note>
 
     <div class="photo-wrapper">
-      <ion-avatar class="avatar-big">
-        <img *ngIf="preview; else placeholder" [src]="preview" />
-        <ng-template #placeholder>
-          <div class="avatar-placeholder">+</div>
-        </ng-template>
-      </ion-avatar>
-      <ion-button fill="clear" (click)="fileInput.click()">Ajouter une photo</ion-button>
-      <input #fileInput type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
-    </div>
+
+  <ion-avatar class="avatar-big" (click)="fileInput.click()" style="cursor: pointer;">
+    <img *ngIf="preview; else placeholder" [src]="preview" />
+    <ng-template #placeholder>
+      <div class="avatar-placeholder">+</div>
+    </ng-template>
+  </ion-avatar>
+<ion-label style="color: white; font-size: 16px; font-weight: 500;">
+  Photo de profil
+</ion-label>
+
+  <input #fileInput type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
+</div>
   </div>
 
   <!-- Type -->
@@ -81,10 +85,10 @@
   <!-- Taille -->
   <div class="section-card">
     <h3>Taille</h3>
-    <ion-segment >
-      <ion-segment-button value="small">Petite</ion-segment-button>
-      <ion-segment-button value="medium">Moyenne</ion-segment-button>
-      <ion-segment-button value="large">Grande</ion-segment-button>
+    <ion-segment [(ngModel)]="pet.taille">
+      <ion-segment-button value="Petite">Petite</ion-segment-button>
+      <ion-segment-button value="Moyenne">Moyenne</ion-segment-button>
+      <ion-segment-button value="Grande">Grande</ion-segment-button>
     </ion-segment>
   </div>
 
@@ -104,6 +108,10 @@
   </ion-segment-button>
       
     </ion-segment>
+    </div>
+
+
+  <div class="section-card">
 
     <h3>Date de naissance</h3>
           <ion-item class="date-item" lines="full" (click)="showDatePicker = true">
@@ -134,7 +142,11 @@
     ></ion-datetime>
   </ng-template>
 </ion-popover>
+</div>
 
+
+
+  <div class="section-card">
 
     <h3>Poids (kg)</h3>
     <ion-item lines="none">
@@ -152,6 +164,7 @@
       Le poids est requis.
     </ion-note>
   </div>
+
 
   <!-- Vaccination -->
   <div class="section-card">
@@ -203,12 +216,38 @@
       <!-- on agrandit simplement ici -->
       <img 
         [src]="'/assets/' + d.icon"
-        style="width: 150px; height: 100px;" 
+        style="width: 190px; height: 190px;" 
         alt="{{ d.label }}"
       />
       
       <p>{{ d.label }}</p>
     </div>
+  </div>
+</div>
+
+<div class="section-card">
+  <h3>Album</h3>
+  <ion-item lines="none" class="flat-input" detail="false">
+    <ion-label>Ajouter des images et vidéos de votre animal</ion-label>
+    <ion-button fill="clear" (click)="fileInput.click()">
+      <ion-icon name="image-outline" slot="start"></ion-icon>
+      Parcourir...
+    </ion-button>
+    <input
+      #fileInput
+      type="file"
+      multiple
+      accept="image/*,video/*"
+      (change)="onFilesSelected($event)"
+      style="display: none;"
+    />
+  </ion-item>
+
+  <div *ngIf="albumPhotos.length > 0" class="preview-container">
+    <p>Fichiers sélectionnés :</p>
+    <ul>
+      <li *ngFor="let file of albumPhotos">{{ file.name }}</li>
+    </ul>
   </div>
 </div>
 

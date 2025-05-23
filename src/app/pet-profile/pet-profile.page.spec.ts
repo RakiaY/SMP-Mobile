@@ -13,7 +13,12 @@ import { IonDatetimeCustomEvent } from '@ionic/core';
   styleUrls: ['./pet-profile.page.scss'],
 })
 export class PetProfilePage {
+albumPhotos: any;
+onFilesSelected($event: Event) {
+throw new Error('Method not implemented.');
+}
 medicalFolder: any;
+criticalCondition: any;
 formatDate(arg0: string) {
 throw new Error('Method not implemented.');
 }
@@ -33,7 +38,7 @@ onPhotoSelected($event: Event) {
 throw new Error('Method not implemented.');
 }
   pet = { name: '', description: '', breed: '', type: '',gender: '', birth_date: '', weight: null, is_vaccinated: null, has_contagious_disease: null,
-    has_medical_file:null,is_critical_condition:null,  photo_profil: null };
+    has_medical_file:null,is_critical_condition:null,  photo_profil: null , taille:''};
   preview: string | null = null ;
   
 

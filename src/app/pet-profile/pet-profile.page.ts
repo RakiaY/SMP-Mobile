@@ -9,6 +9,8 @@ import { PetService } from '../services/pet.service';
 import { Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-pet-profile',
@@ -25,6 +27,7 @@ export class PetProfilePage implements OnInit {
     gender: '',
     birth_date: '',
     weight: null,
+    taille:'',
     is_vaccinated: null,
     has_contagious_disease: null,
     has_medical_file: null,
@@ -167,11 +170,13 @@ criticalCondition = [
   albumPhotos: File[] = [];
   petTypeOther: string | null = null;
 
+
   constructor(
     private storage: Storage,
     private toastCtrl: ToastController,
     private petService: PetService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit() {
@@ -193,12 +198,17 @@ getBreeds() {
   }
 }
 
-  onAlbumPhotosSelected(event: Event) {
+
+ 
+onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.albumPhotos = Array.from(input.files);
-    }
+    if (!input.files) return;
+
+    this.albumPhotos = Array.from(input.files);
+    console.log(this.albumPhotos);
   }
+
+
 
   async savePet() {
     const currentUser = await this.storage.get('current_user');
@@ -214,15 +224,17 @@ getBreeds() {
     formData.append('name', this.pet.name || '');
     formData.append('type', this.pet.type || '');
 
-    if (this.pet.type === 'autre') {
+    if (this.pet.type === 'Autre') {
       formData.append('type_other', this.petTypeOther || '');
     }
 
     formData.append('breed', this.pet.breed || '');
-    formData.append('size', this.pet.size || '');
+    formData.append('taille', this.pet.taille || '');
     formData.append('gender', this.pet.gender || '');
 formData.append('birth_date', this.formatDateToYMD(this.pet.birth_date));
     formData.append('weight', this.pet.weight?.toString() || '');
+        formData.append('taille', this.pet.taille || '');
+
     formData.append('training', this.pet.training?.toString() || '');
     formData.append('is_vaccinated', String(this.pet.is_vaccinated));
     formData.append('has_contagious_diseases', String(this.pet.has_contagious_disease));
