@@ -1,4 +1,3 @@
-<ion-content class="dashboard" fullscreen>
 <ion-header class="custom-header">
   <div class="header-top">
     <h2>Bienvenue <ion-icon name="paw-outline"></ion-icon></h2>
@@ -10,71 +9,115 @@
   </div>
 </ion-header>
 
+<ion-content class="dashboard-content" fullscreen>
+  <ion-segment [(ngModel)]="selectedSegment" color="primary">
+    <ion-segment-button value="Annonces">
+      <ion-label>Mes recherches</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="articles">
+      <ion-label>Articles de presse</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
-<ion-content class="dashboard-content">
-  <div class="article-section">
-    <ion-card>
-      <ion-card-header>
-        <ion-icon name="water-outline" class="article-icon"></ion-icon>
-        <ion-card-title>Hydratez votre animal</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        Assurez-vous que votre compagnon a toujours accès à de l'eau fraîche, surtout en été.
-      </ion-card-content>
-    </ion-card>
+  <!-- Mes recherches -->
+  <div *ngIf="selectedSegment==='Annonces'">
+    <div class="forum-section">
+      <div class="section-header">
+        <h3>Mes recherches</h3>
+        <ion-button fill="clear" (click)="addSearch()">Ajouter une recherche</ion-button>
+      </div>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-icon name="sunny-outline" class="article-icon"></ion-icon>
-        <ion-card-title>Évitez les promenades en pleine chaleur</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        Promenez votre animal tôt le matin ou en fin de journée pour éviter les coups de chaleur.
-      </ion-card-content>
-    </ion-card>
+      <ng-container *ngIf="!loading; else loadingTpl">
+        <!-- If there *are* searches -->
+        <ng-container *ngIf="mySearches.length > 0; else noSearchesTpl">
+          <ng-container *ngFor="let req of mySearches">
+            <div class="request-card">
+              <!-- static image -->
+              <img src="/assets/CriticalCondition.png"
+                   alt="Pet Image"
+                   class="pet-image" />
 
-    <ion-card>
-      <ion-card-header>
-        <ion-icon name="paw-outline" class="article-icon"></ion-icon>
-        <ion-card-title>Vérifiez régulièrement ses coussinets</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        Les coussinets peuvent se fissurer ou se brûler sur les surfaces chaudes ou glacées.
-      </ion-card-content>
-    </ion-card>
+              <!-- action buttons -->
+              <div class="action-buttons">
+                <ion-button fill="clear" (click)="editSearch(req.searchId)">
+                  <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" (click)="deleteSearch(req.searchId)">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+
+              <!-- existing details -->
+              <div class="owner-name">{{ req.petName }} ({{ req.petId }})</div>
+              <div class="owner-detail"><strong>Adresse :</strong> {{ req.address }}</div>
+              <div class="owner-detail"><strong>Type de garde :</strong> {{ req.careType }}</div>
+              <div class="owner-detail"><strong>Durée :</strong> {{ req.careDuration }} jours</div>
+              <div class="owner-detail">
+                <strong>Prix :</strong>
+                {{ req.minPrice | currency:'EUR':'symbol' }}
+                 – {{ req.maxPrice | currency:'EUR':'symbol' }}
+              </div>
+              <div class="owner-detail">
+                <strong>Période :</strong>
+                {{ req.startDate | date:'dd/MM/yyyy' }} –
+                {{ req.endDate   | date:'dd/MM/yyyy' }}
+              </div>
+              <div class="owner-detail">
+                <strong>Services attendus :</strong> {{ req.expectedServices }}
+              </div>
+              <div class="owner-detail"><strong>Description :</strong> {{ req.description }}</div>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <!-- empty-state when no searches -->
+        <ng-template #noSearchesTpl>
+          <div class="no-searches">
+            <ion-icon name="paw-outline"></ion-icon>
+            <p>Vous n’avez aucune recherche pour le moment.</p>
+            
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <ng-template #loadingTpl>
+        <ion-skeleton-text animated="true" style="width:100%;height:80px"></ion-skeleton-text>
+      </ng-template>
+    </div>
   </div>
-</ion-content>
 
+  <!-- Articles de presse -->
+  <div *ngIf="selectedSegment==='articles'">
+    <div class="article-section">
+      <ion-card>
+        <ion-card-header>
+          <ion-icon name="water-outline" class="article-icon"></ion-icon>
+          <ion-card-title>Hydratez votre animal</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Assurez-vous que votre compagnon a toujours accès à de l'eau fraîche, surtout en été.
+        </ion-card-content>
+      </ion-card>
+      <!-- …etc. as before… -->
+    </div>
+  </div>
 
-<ion-footer class="custom-footer">
-  <ion-toolbar>
-    <ion-tabs>
-      <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="home">
-          <ion-icon name="home-outline"></ion-icon>
-        </ion-tab-button>
-
-       
-
-        <ion-tab-button  (click)="navigateTo('/pets')">
-          <ion-icon name="add-circle-outline"></ion-icon>
-        </ion-tab-button>
-
-
-        <ion-tab-button  (click)="navigateTo('/form-searchsitter')">
+  <ion-footer class="custom-footer">
+    <ion-toolbar>
+      <ion-tabs>
+        <ion-tab-bar slot="bottom">
+          <ion-tab-button tab="home"><ion-icon name="home-outline"></ion-icon></ion-tab-button>
+          <ion-tab-button tab="chat" (click)="navigateTo('/find-sitter')">
             <ion-icon name="chatbubble-outline"></ion-icon>
           </ion-tab-button>
-
-        <ion-tab-button tab="notif" (click)="navigateTo('/notifications')">
-          <ion-icon name="notifications-outline"></ion-icon>
-        </ion-tab-button>
-
-        <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
-          <ion-icon name="person-outline"></ion-icon>
-        </ion-tab-button>
-      </ion-tab-bar>
-    </ion-tabs>
-  </ion-toolbar>
-</ion-footer>
-
+          <ion-tab-button tab="add" (click)="navigateTo('/pets')">
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-tab-button>
+          <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
+            <ion-icon name="person-outline"></ion-icon>
+          </ion-tab-button>
+        </ion-tab-bar>
+      </ion-tabs>
+    </ion-toolbar>
+  </ion-footer>
 </ion-content>
