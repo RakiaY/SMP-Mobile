@@ -17,7 +17,7 @@ export class DashboardComponent  implements OnInit {
       console.log('Dashboard loaded');
     }
     navigateTo(path: string): void {
-      this.router.navigate([path]);
+      this.router.navigateByUrl(path);
 }
 }
 

@@ -54,13 +54,16 @@
           <ion-icon name="home-outline"></ion-icon>
         </ion-tab-button>
 
-        <ion-tab-button tab="search" (click)="navigateTo('/find-sitter')">
-          <ion-icon name="search-outline"></ion-icon>
-        </ion-tab-button>
+       
 
-        <ion-tab-button tab="add" (click)="navigateTo('/pets')">
+        <ion-tab-button  (click)="navigateTo('/pets')">
           <ion-icon name="add-circle-outline"></ion-icon>
         </ion-tab-button>
+
+
+        <ion-tab-button  (click)="navigateTo('/form-searchsitter')">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+          </ion-tab-button>
 
         <ion-tab-button tab="notif" (click)="navigateTo('/notifications')">
           <ion-icon name="notifications-outline"></ion-icon>

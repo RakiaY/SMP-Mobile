@@ -13,6 +13,9 @@ import { PetsPage }           from './pets/pets.page';
 import { DashboardSitterComponent } from './dashboard-sitter/dashboard-sitter.component';
 import { AuthGuard } from './guards/auth.guard';
 import { LogoutGuard } from './guards/logout.guard';
+import { FormSearchSitterComponent} from './form-searchsitter/form-searchsitter.component';
+import { PetownerProfilComponent } from './petowner-profil/petowner-profil.component';
+import { gardienProfilComponent } from './gardien-profil/gardien-profil.component';
 
 export const routes: Routes = [
   { path: '', component: SplashComponent }, // ✅ doit être tout en haut
@@ -28,7 +31,8 @@ export const routes: Routes = [
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:id', component: PetProfilePage },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
-
+{ path: 'petowner-profil', component: PetownerProfilComponent },
+  { path: 'gardien-profil' , component: gardienProfilComponent},
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
   //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
 

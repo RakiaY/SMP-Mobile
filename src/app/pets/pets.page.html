@@ -15,7 +15,7 @@
         <ion-item *ngFor="let pet of Pets">
           <ion-avatar slot="start">
 <ion-avatar slot="start">
-  <img [src]="'http://localhost:8000/storage/' + pet.photo_profil" />
+  <img [src]= pet.photo_profil />
 </ion-avatar>          </ion-avatar>
           <ion-label>
             <h3>{{ pet.name }}</h3>

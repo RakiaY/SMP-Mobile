@@ -5,6 +5,7 @@ import { AnimalService, Animal } from '../services/animal.service';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { PetService } from '../services/pet.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pets',
@@ -23,7 +24,7 @@ export class PetsPage implements OnInit {
     private animalService: AnimalService,
     private router: Router,
         private auth:AuthService,
-            private petService: PetService,
+            private petService: PetService,  private sanitizer: DomSanitizer
 
     
   ) {}
@@ -78,4 +79,21 @@ editPet(petId: number) {
       description: newDesc
     });
   }
+
+  getPetPhotoUrl(photoProfil: string | null): string {
+  const baseUrl = 'http://localhost:8000/storage/';
+  if (!photoProfil) {
+    return 'assets/default-pet.png';
+  }
+
+  const fullUrl = baseUrl + photoProfil;
+  console.log('Image URL générée:', fullUrl); // 👈 ajoute ça
+  return fullUrl;
+}
+getSanitizedImageUrl(photo_profil: string): SafeResourceUrl {
+  const url = 'http://localhost:8000/storage/' + photo_profil;
+  return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+}
+
+
 }

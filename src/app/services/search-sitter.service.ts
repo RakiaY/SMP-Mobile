@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { PetOwnerRequest } from '../models/pet-owner-request.model';
 
 interface RawSearch {
@@ -25,8 +25,7 @@ interface ApiResponse {
 
 @Injectable({ providedIn: 'root' })
 export class SearchSitterService {
-  private base = 'http://localhost:8000/api/mobile';
-
+  private base = 'http://localhost:8000/api/mobile/SearchSitter';
   constructor(private http: HttpClient) {}
 
   getRequests(): Observable<PetOwnerRequest[]> {
@@ -55,4 +54,15 @@ export class SearchSitterService {
         })))
       );
   }
+
+  addSearch( searchData: FormData): Observable<any> {
+  return this.http.post(`${this.base}/add`, searchData).pipe(
+    catchError(error => {
+      if (error.status === 422) {
+        // Gestion des erreurs de validation
+        return throwError(() => error.error.errors);
+      }
+      return throwError(() => 'Une erreur est survenue');
+    })
+  );  }
 }

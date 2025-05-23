@@ -1,0 +1,61 @@
+<ion-content class="dashboard" fullscreen>
+<ion-header>
+  <ion-toolbar class="content">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="content">
+   <!-- Données personnelles -->
+   <ion-accordion>
+    <ion-item slot="header">
+      <ion-icon name="person-outline" slot="start" class="icone"></ion-icon>
+      <ion-label>Données personnelles</ion-label>
+    </ion-item>
+  </ion-accordion>
+  
+  <!-- Historique de garde -->
+  <ion-accordion>
+    <ion-item slot="header">
+      <ion-icon name="time-outline" slot="start" class="icone"></ion-icon> 
+      <ion-label>Historique de garde</ion-label>
+    </ion-item>
+  </ion-accordion>
+
+  <ion-accordion>
+    <ion-item slot="header">
+      <ion-icon name="clipboard-outline" slot="start" class="icone"></ion-icon> <!-- Changer l'icône ici -->
+      <ion-label>Mes postulations</ion-label> <!-- Nouveau titre -->
+    </ion-item>
+  </ion-accordion>
+
+</ion-content>
+
+<!-- Footer -->
+<ion-footer class="custom-footer">
+  <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="home"(click)="navigateTo('/dashboard-guardian')">
+          <ion-icon name="home-outline"></ion-icon>
+        </ion-tab-button>
+
+        <ion-tab-button tab="chat">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+        </ion-tab-button>
+
+        <ion-tab-button tab="calendar">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </ion-tab-button>
+
+        <ion-tab-button tab="profile" >
+          <ion-icon name="person-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+</ion-footer>
+</ion-content>
