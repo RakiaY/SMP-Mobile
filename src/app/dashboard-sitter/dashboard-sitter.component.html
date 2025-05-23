@@ -73,7 +73,7 @@
           </div>
           <div class="owner-detail">
             <strong>Prix :</strong>
-            {{ req.price | currency:'EUR':'symbol' }}
+            {{ req.minPrice | currency:'EUR':'symbol' }} - {{ req.maxPrice | currency:'EUR':'symbol' }}
           </div>
           <div class="owner-detail">
             <strong>Période :</strong>
@@ -163,11 +163,12 @@
           <ion-tab-button tab="home">
             <ion-icon name="home-outline" (click)="navigateTo('/dashboard-sitter')"></ion-icon>
           </ion-tab-button>
-          <ion-tab-button tab="search">
-            <ion-icon name="calendar-outline" (click)="navigateTo('/find-sitter')"></ion-icon>
+          
+          <ion-tab-button tab="chat">
+            <ion-icon name="chatbubble-outline" (click)="navigateTo('/pets')"></ion-icon>
           </ion-tab-button>
-          <ion-tab-button tab="add">
-            <ion-icon name="add-circle-outline" (click)="navigateTo('/pets')"></ion-icon>
+          <ion-tab-button tab="agenda">
+            <ion-icon name="calendar-outline" (click)="navigateTo('/find-sitter')"></ion-icon>
           </ion-tab-button>
           <ion-tab-button tab="profile">
             <ion-icon name="person-outline" (click)="navigateTo('/profile')"></ion-icon>

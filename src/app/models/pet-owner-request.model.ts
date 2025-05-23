@@ -24,7 +24,8 @@ export interface PetOwnerRequest {
   duration:    string;
   startDate:   Date;
   endDate:     Date;
-  price:       number;
+  minPrice:       number;
+  maxPrice:       number;
 
   liked:     boolean;  // controls heart vs. heart-outline
   petted:    boolean;  // controls paw highlight

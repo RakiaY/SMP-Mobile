@@ -17,6 +17,7 @@ interface RawSearch {
   start_date: string;
   end_date: string;
   remunerationMin: number;
+  remunerationMax: number;
 }
 
 interface ApiResponse {
@@ -46,7 +47,8 @@ export class SearchSitterService {
           duration:      raw.care_duration,
           startDate:     new Date(raw.start_date),
           endDate:       new Date(raw.end_date),
-          price:         raw.remunerationMin,
+          minPrice:         raw.remunerationMin,
+          maxPrice:         raw.remunerationMax,
           // initialise toggles
           postulationId: undefined,
           statut:        undefined,
