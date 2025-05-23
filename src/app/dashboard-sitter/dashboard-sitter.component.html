@@ -40,11 +40,11 @@
             (click)="viewPet(req); req.petted = !req.petted"
           ></ion-icon>
           <ion-icon
-            class="like-icon"
-            name="heart"
-            [ngClass]="{ liked: req.liked }"
-            (click)="toggleLike(req)"
-          ></ion-icon>
+          class="like-icon"
+            [name]="req.liked ? 'heart' : 'heart-outline'"
+            [color]="getStatusColor(req.liked)"
+            (click)="togglePostulation(req)">
+          </ion-icon>
         </div>
 
         <!-- Request details -->

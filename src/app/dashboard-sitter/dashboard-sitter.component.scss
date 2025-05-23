@@ -58,7 +58,7 @@
   background: #fdfaf5;
   padding: 25px 16px;
   border-radius: 0 0 24px 24px;
-  margin-bottom: 16px;
+  margin-bottom: 75px;
 }
 
 .request-card {
@@ -104,7 +104,7 @@
     gap: 50px; /* increased space between icons */
 
     ion-icon {
-      font-size:  FortyEightPx; /* replaced placeholder below */
+      font-size:  48px; /* replaced placeholder below */
       color: #000;
       cursor: pointer;
       transition: color 0.3s, transform 0.2s;
