@@ -26,7 +26,7 @@ export const routes: Routes = [
   { path: 'find-sitter', component: FindSitterComponent },
   { path: 'pets/add', component: PetProfilePage },
   { path: 'pets',        component: PetsPage },
-  { path: 'pets/edit/:index', component: PetProfilePage },
+  { path: 'pets/edit/:id', component: PetProfilePage },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
 
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
@@ -89,6 +89,11 @@ export const routes: Routes = [
   path: 'pets/add',
   loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
   canActivate: [AuthGuard]  // <-- protected route
-}
+},
+  { path: 'pets/edit/:id', 
+    loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
+  canActivate: [AuthGuard]  // <-- protected route
+  },
+
 
 ];

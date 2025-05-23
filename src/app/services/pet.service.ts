@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,21 @@ export class PetService {
     return this.http.delete(`${this.baseUrl}/delete/${id}`);
   }
 
-  getPetsByOwner(ownerId: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/owner/${ownerId}`);
+ 
+  getPetsByOwner(ownerId: number): Observable<any[]> {
+  return this.http.get<any>(`${this.baseUrl}/ByOwner/${ownerId}`).pipe(
+    map(response => {
+      return response.Pets || []; 
+    }),
+    catchError(err => {
+      console.error('Erreur API (getPetsByOwner):', err);
+      return of([]); // Si erreur, renvoie un tableau vide
+    })
+  );
+}
+
+  
+  getPetById(petId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${petId}`);
   }
 }

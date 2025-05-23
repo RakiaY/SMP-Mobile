@@ -9,24 +9,25 @@
 
 <ion-content class="pets-content" fullscreen>
   <div class="pets-wrapper">
-    <ng-container *ngIf="animals.length > 0; else noAnimals">
+    <!-- 🐶 Liste des animaux -->
+    <ng-container  class="animal-item"  *ngIf="Pets.length > 0; else noAnimals">
       <ion-list>
-        <ion-item *ngFor="let a of animals; let i = index">
+        <ion-item *ngFor="let pet of Pets">
           <ion-avatar slot="start">
-            <img [src]="a.photoDataUrl" />
-          </ion-avatar>
+<ion-avatar slot="start">
+  <img [src]="'http://localhost:8000/storage/' + pet.photo_profil" />
+</ion-avatar>          </ion-avatar>
           <ion-label>
-            <h3>{{ a.name }}</h3>
-            <p>{{ a.description }}</p>
+            <h3>{{ pet.name }}</h3>
           </ion-label>
           <ion-buttons slot="end" class="action-buttons">
             <!-- Éditer -->
-            <ion-button fill="clear" size="small"   [routerLink]="['/pets/edit', i]">
+            <ion-button fill="clear" size="small"  (click)="editPet(pet.id)" >
               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-button>
       
             <!-- Supprimer -->
-            <ion-button fill="clear" size="small"  (click)="deleteAnimal(i)">
+            <ion-button fill="clear" size="small" >
               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-button>
           </ion-buttons>
