@@ -32,6 +32,8 @@ interface ApiResponse {
 export class SearchSitterService {
  
   private base = 'http://localhost:8000/api/mobile/SearchSitter';
+    private base2 = 'http://localhost:8000/api/SearchSitter';
+
   constructor(private http: HttpClient) {}
 
   getRequests(): Observable<PetOwnerRequest[]> {
@@ -64,7 +66,7 @@ export class SearchSitterService {
   }
 
   addSearch( searchData: FormData): Observable<any> {
-  return this.http.post(`${this.base}/add`, searchData).pipe(
+  return this.http.post(`${this.base2}/add`, searchData).pipe(
     catchError(error => {
       if (error.status === 422) {
         // Gestion des erreurs de validation
@@ -73,6 +75,11 @@ export class SearchSitterService {
       return throwError(() => 'Une erreur est survenue');
     })
   );  }
+
+  createSearch(data: any) {
+    return this.http.post(this.base2, data);
+  }
+
   /** Fetch *all* search-pet-sitter records from the API */
   getAll(): Observable<Search[]> {
     return this.http

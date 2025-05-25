@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { GardienProfilComponent } from './gardien-profil.component';
+import { gardienProfilComponent } from './gardien-profil.component';
 
 describe('GardienProfilComponent', () => {
-  let component: GardienProfilComponent;
-  let fixture: ComponentFixture<GardienProfilComponent>;
+  let component: gardienProfilComponent;
+  let fixture: ComponentFixture<gardienProfilComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GardienProfilComponent ],
+      declarations: [ gardienProfilComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GardienProfilComponent);
+    fixture = TestBed.createComponent(gardienProfilComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

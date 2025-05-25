@@ -1,161 +1,340 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" color="light"></ion-back-button>
     </ion-buttons>
     <ion-title>Chercher Un Gardien</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveSearch()"  fill="clear">
+        <ion-icon slot="icon-only" name="checkmark-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-   
-    <!-- Animal -->
-    <ion-item>
-                <ion-label>Choisir un animal</ion-label>
-            <ion-select 
-              [(ngModel)]="newSearch.pet_id" 
-              name="pet_id"
-              interface="action-sheet" 
-            >
-    <ion-select-option *ngFor="let pet of Pets" [value]="pet.id">
-      {{ pet.name }}
-    </ion-select-option>
-  </ion-select>
-    </ion-item>
-
-    <!-- Description -->
-    <ion-item>
-      <ion-label >Description</ion-label>
-            <textarea class="form-control" [(ngModel)]="newSearch.description" name="description"></textarea>
-    </ion-item>
-
-    <!-- Type de garde (sélection) -->
-    <ion-item>
-      <ion-label>Type de garde</ion-label>
-      <ion-select formControlName="guardType" required>
-        <ion-select-option value="chez_proprietaire">Chez le propriétaire</ion-select-option>
-        <ion-select-option value="en_chenil">En chenil</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <!-- Durée -->
-    <ion-item>
-      <ion-label >Durée</ion-label>
-      <ion-input formControlName="duration" required type="number" [(ngModel)]="newSearch.care_duration"></ion-input>
-    </ion-item>
-
-<div class="section-card">
-<h3>Date de début</h3>
-          <ion-item class="date-item" lines="full" (click)="showDatePicker = true">
-             <input
-    type="text"
-    readonly
-    [value]="formatDate(newSearch.start_date)"
-    placeholder="Date de début"
-  />
-            <ion-icon slot="end" name="calendar-outline" class="date-icon"></ion-icon>
-          </ion-item>
-          
-<!-- Popover avec le datepicker -->
-<ion-popover
-  *ngIf="showDatePicker"
-  [isOpen]="showDatePicker"
-  (didDismiss)="showDatePicker = false"
->
-  <ng-template>
-    <ion-datetime
-      interface="modal"
-
-      presentation="date"
-      [value]="newSearch.start_date"
-      (ionChange)="onDateSelected($event)"
-      cancel-text="Annuler"
-      done-text="OK"
-    ></ion-datetime>
-  </ng-template>
-</ion-popover>
-</div>
-
-
-<div class="section-card">
-<h3>Date de fin</h3>
-          <ion-item class="date-item" lines="full" (click)="showDatePicker = true">
-             <input
-    type="text"
-    readonly
-    [value]="formatDate(newSearch.end_date)"
-    placeholder="Date de fin"
-  />
-            <ion-icon slot="end" name="calendar-outline" class="date-icon"></ion-icon>
-          </ion-item>
-          
-<!-- Popover avec le datepicker -->
-<ion-popover
-  *ngIf="showDatePicker"
-  [isOpen]="showDatePicker"
-  (didDismiss)="showDatePicker = false"
->
-  <ng-template>
-    <ion-datetime
-      interface="modal"
-
-      presentation="date"
-      [value]="newSearch.end_date"
-      (ionChange)="onDateSelected($event)"
-      cancel-text="Annuler"
-      done-text="OK"
-    ></ion-datetime>
-  </ng-template>
-</ion-popover>
-</div>
-
-
-    <!-- Services attendus -->
-    <ion-item>
-      <ion-label >Services attendus</ion-label>
-      <ion-input formControlName="services" required   [(ngModel)]="newSearch.expected_services" ></ion-input>
-    </ion-item>
-
-    <!-- Rémunération min -->
-    <ion-item>
-      <ion-label >Rémunération min</ion-label>
-      <ion-input formControlName="minSalary" required type="number" [(ngModel)]="newSearch.remunerationMin" ></ion-input>
-    </ion-item>
-
-    <!-- Rémunération max -->
-    <ion-item>
-      <ion-label >Rémunération max</ion-label>
-      <ion-input formControlName="maxSalary" required type="number" [(ngModel)]="newSearch.remunerationMax"  ></ion-input>
-    </ion-item>
-
-   <input type="hidden" [(ngModel)]="newSearch.latitude" name="latitude">
-   <input type="hidden" [(ngModel)]="newSearch.longitude" name="longitude">
-   <button type="button" class="btn btn-secondary mb-2" (click)="openMap()">Sélectionner</button>
-   <!-- MODALE POUR LA CARTE -->
-          <div class="map-modal" *ngIf="showMap">
-            <div class="map-modal-content">
-              <h4>Sélectionnez une position sur la carte</h4>
-              <div id="map" style="height: 400px;"></div>
-              <div class="map-actions">
-                <button (click)="closeMap()">Confirmer</button>
-              </div>
-            </div>
-          </div>
-           <div class="form-group">
-            <label>Adresse</label>
-            <input type="text" class="form-control" [(ngModel)]="newSearch.adresse" name="adresse" />
-
-          </div>
-
-          <!-- Carte affichée conditionnellement -->
-              <div id="map" style="height: 400px;"></div>
-                  
-
-
-
-    <!-- Enregistrer -->
-  <ion-button expand="block" class="save-btn" (click)="saveSearch()">Enregistrer</ion-button>
+<ion-content class="ion-padding form-container">
   
-    
-   
+  <!-- Section Animal -->
+  <ion-card class="form-section">
+    <ion-card-header>
+      <ion-card-title class="section-title">
+        <ion-icon name="paw-outline"></ion-icon>
+        Informations sur l'animal
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Animal -->
+      <div class="input-group">
+        <ion-label class="input-label">Mon animal</ion-label>
+        <ion-select 
+          [(ngModel)]="newSearch.pet_id" 
+          name="pet_id" 
+          interface="action-sheet"
+          placeholder="Sélectionnez votre animal">
+          <ion-select-option *ngFor="let pet of Pets" [value]="pet.id">
+            {{ pet.name }} ({{ pet.type }})
+          </ion-select-option>
+        </ion-select>
+      </div>
+
+      <!-- Description -->
+      <div class="input-group">
+        <ion-label class="input-label">Description supplémentaire</ion-label>
+        <ion-textarea
+          [(ngModel)]="newSearch.description"
+          name="description"
+          placeholder="Décrivez vos besoins spécifiques (comportement, santé, etc.)"
+          rows="4">
+        </ion-textarea>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+ <!-- Type de garde -->
+<ion-card class="form-section">
+  <ion-card-header>
+    <ion-card-title class="section-title">
+      <ion-icon name="home-outline"></ion-icon>
+      Type de garde
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <ion-segment [(ngModel)]="newSearch.care_type" (ionChange)="onCareTypeChange()">
+      <ion-segment-button value="chez_proprietaire">
+        <ion-label>Chez moi</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="en_chenil">
+        <ion-label>En chenil</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-card-content>
+</ion-card>
+
+<!-- Section spécifique "chez moi" - cachée par défaut -->
+<div *ngIf="newSearch.care_type === 'chez_proprietaire'" class="form-section">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title class="section-title">
+        <ion-icon name="time-outline"></ion-icon>
+        Détails pour garde à domicile
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Nombre de passages -->
+      <div class="input-group">
+        <ion-label class="input-label">Nombre de visites quotidiennes</ion-label>
+        <ion-input
+      type="number"
+      [(ngModel)]="passagesPerDay"
+      (ionChange)="onPassagesPerDayChange($event.detail.value)">
+    </ion-input>
+        <div class="range-value">{{ passagesPerDay }} visite(s) par jour</div>
+      </div>
+
+      <!-- Créneaux horaires -->
+      <div class="time-slots-container">
+        <h3 class="time-slots-title">Horaires des visites</h3>
+        <div *ngFor="let slot of slots; let i = index" class="time-slot-card">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Visite {{ i + 1 }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Heure de début -->
+      <div class="time-input-group">
+        <ion-label>Heure de début</ion-label>
+       
+      <ion-item lines="full" button (click)="openStartPicker(i)">
+  <ion-input
+    readonly
+    [value]="extractHHMM(slot.start_time)"
+    placeholder="Heure de début">
+  </ion-input>
+  <ion-icon slot="end" name="time-outline"></ion-icon>
+</ion-item>
+<ion-popover
+  [isOpen]="showStartPicker[i]"
+  (didDismiss)="closeStartPicker(i)">
+  <ng-template>
+    <ion-datetime
+      presentation="time"
+      display-format="HH:mm"
+      picker-format="HH:mm"
+      [value]="slot.start_time"
+      (ionChange)="onStartTimeSelected($event, i)"
+      cancel-text="Annuler"
+      done-text="OK">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+      </div>
+
+      <!-- Heure de fin -->
+      <div class="time-input-group">
+        <ion-label>Heure de fin</ion-label>
+        <ion-item lines="full" button (click)="openEndPicker(i)">
+  <ion-input
+    readonly
+    [value]="extractHHMM(slot.end_time)"
+    placeholder="Heure de fin">
+  </ion-input>
+  <ion-icon slot="end" name="time-outline"></ion-icon>
+</ion-item>
+<ion-popover
+  [isOpen]="showEndPicker[i]"
+  (didDismiss)="closeEndPicker(i)">
+  <ng-template>
+    <ion-datetime
+      presentation="time"
+      display-format="HH:mm"
+      picker-format="HH:mm"
+      [value]="slot.end_time"
+      (ionChange)="onEndTimeSelected($event, i)"
+      cancel-text="Annuler"
+      done-text="OK">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+  <!-- Section Dates -->
+ <ion-card class="form-section">
+  <ion-card-header>
+    <ion-card-title class="section-title">
+      <ion-icon name="calendar-outline"></ion-icon>
+      Période de garde
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+
+    <!-- Date de début -->
+    <div class="date-input-group">
+      <ion-label class="input-label">Date de début</ion-label>
+      <ion-item class="date-item" button (click)="openStartDatePicker()">
+        <ion-input
+          readonly
+          [value]="formatDate(newSearch.start_date)"
+          placeholder="Date de début">
+        </ion-input>
+        <ion-icon slot="end" name="calendar-outline" class="date-icon"></ion-icon>
+      </ion-item>
+      <ion-popover
+        *ngIf="showStartDatePicker"
+        [isOpen]="showStartDatePicker"
+        (didDismiss)="closeStartDatePicker()">
+        <ng-template>
+          <ion-datetime
+            interface="modal"
+            presentation="date"
+            [value]="newSearch.start_date"
+            (ionChange)="onStartDateSelected($event)"
+            cancel-text="Annuler"
+            done-text="OK">
+          </ion-datetime>
+        </ng-template>
+      </ion-popover>
+    </div>
+
+    <!-- Date de fin -->
+    <div class="date-input-group">
+      <ion-label class="input-label">Date de fin</ion-label>
+      <ion-item class="date-item" button (click)="openEndDatePicker()">
+        <ion-input
+          readonly
+          [value]="formatDate(newSearch.end_date)"
+          placeholder="Date de fin">
+        </ion-input>
+        <ion-icon slot="end" name="calendar-outline" class="date-icon"></ion-icon>
+      </ion-item>
+      <ion-popover
+        *ngIf="showEndDatePicker"
+        [isOpen]="showEndDatePicker"
+        (didDismiss)="closeEndDatePicker()">
+        <ng-template>
+          <ion-datetime
+            interface="modal"
+            presentation="date"
+            [value]="newSearch.end_date"
+            (ionChange)="onEndDateSelected($event)"
+            cancel-text="Annuler"
+            done-text="OK">
+          </ion-datetime>
+        </ng-template>
+      </ion-popover>
+    </div>
+
+  </ion-card-content>
+</ion-card>
+
+
+  <!-- Section Services et Rémunération -->
+  <ion-card class="form-section">
+    <ion-card-header>
+      <ion-card-title class="section-title">
+        <ion-icon name="list-outline"></ion-icon>
+        Services et rémunération
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="input-group">
+        <ion-label class="input-label">Services attendus</ion-label>
+        <ion-textarea
+          [(ngModel)]="newSearch.expected_services"
+          name="expected_services"
+          placeholder="Promenades, soins spécifiques, médicaments..."
+          rows="2">
+        </ion-textarea>
+      </div>
+
+      <div class="remuneration-range">
+        <ion-label class="input-label">Budget journalier</ion-label>
+        <div class="range-container">
+          <ion-item lines="none" class="range-input">
+            <ion-input
+              type="number"
+              [(ngModel)]="newSearch.remunerationMin"
+              name="remunerationMin"
+              placeholder="Min"
+              min="0">
+            </ion-input>
+            <span slot="end">€</span>
+          </ion-item>
+          <span class="range-separator">-</span>
+          <ion-item lines="none" class="range-input">
+            <ion-input
+              type="number"
+              [(ngModel)]="newSearch.remunerationMax"
+              name="remunerationMax"
+              placeholder="Max"
+              min="0">
+            </ion-input>
+            <span slot="end">€</span>
+          </ion-item>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+<!-- Section Localisation -->
+<ion-card class="form-section">
+  <ion-card-header>
+    <ion-card-title class="section-title">
+      <ion-icon name="location-outline"></ion-icon>
+      Localisation
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <!-- Champ adresse affiché -->
+    <ion-item lines="full"  button (click)="openMap()">
+      <ion-label>Adresse</ion-label>
+      <ion-input
+        readonly
+        [value]="newSearch.adresse || 'Cliquez pour sélectionner sur la carte'">
+      </ion-input>
+      <ion-icon slot="end" name="map-outline"></ion-icon>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
+
+<!-- Map Modal -->
+<div *ngIf="showMap" class="map-modal">
+  <div class="map-modal-content">
+    <ion-toolbar>
+      <ion-title>Sélection de l’adresse</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="closeMap()">
+          <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <div id="map" style="height: 70vh; margin: 16px 0;"></div>
+    <ion-button expand="full" (click)="closeMap()">
+      Confirmer 
+    </ion-button>
+  </div>
+</div>
+
+<!-- Données cachées en TS (pas d’input hidden ici) -->
+
+
+  
+  <!-- Bouton Valider -->
+  <div class="submit-button-container">
+    <ion-button expand="block" (click)="saveSearch()"  class="submit-button">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Trouver un gardien
+    </ion-button>
+  </div>
+
+
 </ion-content>

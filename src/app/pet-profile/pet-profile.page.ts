@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { ToastController } from '@ionic/angular';
@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+
 
 
 @Component({

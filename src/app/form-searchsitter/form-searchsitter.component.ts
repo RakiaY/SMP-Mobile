@@ -11,25 +11,33 @@ import 'leaflet/dist/leaflet.css';
 import { SearchSitterService } from '../services/search-sitter.service';
 import { IonicStorageModule } from '@ionic/storage-angular'; // Ajoutez cette importation
 import { Drivers } from '@ionic/storage'; // Ajoutez cette importation
+import { CommonModule } from '@angular/common';
+import { Storage } from '@ionic/storage-angular'; // Ajoutez cette importation
+
+
+interface Slot {
+  start_time: string;
+  end_time: string;
+}
 
 @Component({
   standalone:true,
   selector: 'app-form-searchsitter',
-  imports: [IonicModule, RouterModule, ReactiveFormsModule,FormsModule, IonicStorageModule ] ,
+  imports: [IonicModule, RouterModule, ReactiveFormsModule,FormsModule, IonicStorageModule, CommonModule],
     templateUrl: './form-searchsitter.component.html',
   styleUrls: ['./form-searchsitter.component.scss'],
 })
 export class FormSearchSitterComponent   {
 
+
+
       Pets: any[] = [];
       newSearch={
     id: null,
-    user_id: '',
     pet_id: '',
     adresse: '',
     description: '',
     care_type: '',
-    care_duration: '',
     start_date: '',
     end_date: '',
     expected_services: '',
@@ -38,6 +46,26 @@ export class FormSearchSitterComponent   {
     latitude: '',
     longitude: ''
    }
+   // Nouveaux champs pour "chez_proprietaire"
+ // Gestion du nombre de passages avec setter/getter
+  private _passagesPerDay: number = 1;
+  get passagesPerDay(): number {
+    return this._passagesPerDay;
+  }
+  set passagesPerDay(value: number) {
+  const count = Math.max(1, Math.min(5, value));
+  this._passagesPerDay = count;
+  this.slots = Array.from({ length: count }, (_, i) =>
+    this.slots[i] || { start_time: '', end_time: '' }
+  );
+  // important : deux drapeaux séparés
+  this.showStartPicker = Array(count).fill(false);
+  this.showEndPicker   = Array(count).fill(false);
+}
+
+  slots: Array<{ start_time: string; end_time: string }> = [];
+
+  
    map: any;
     marker: any;
   showMap: boolean = false;
@@ -54,7 +82,6 @@ export class FormSearchSitterComponent   {
 }
 
   async ngOnInit() {
-    await this.storage['create']();
 
     // Corriger le problème d’icônes manquantes de Leaflet
     delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -81,6 +108,7 @@ export class FormSearchSitterComponent   {
     } else {
       console.warn("Aucun utilisateur connecté.");
     }
+    
   
   }
 async init() {
@@ -88,34 +116,67 @@ async init() {
 
     this._storage = storage;
   }
+onPassagesPerDayChange(value: string | null | undefined): void {
+    const newCount = value ? parseInt(value, 10) : 0;
+    this.passagesPerDay = newCount;
+
+    // Reconstruire exactement newCount slots, en préservant si possible
+    const newSlots: Slot[] = [];
+    for (let i = 0; i < newCount; i++) {
+      newSlots.push(this.slots[i] || { start_time: '', end_time: '' });
+    }
+    this.slots = newSlots;
+  }
+   onCareTypeChange() {
+  switch(this.newSearch.care_type) {
+    case 'chez_proprietaire':
+      this.passagesPerDay = this.passagesPerDay || 1; // Garde la valeur existante ou 1 par défaut
+      if (!this.slots || this.slots.length === 0) {
+        this.onPassagesPerDayChange(this.passagesPerDay.toString());
+      }
+      break;
+    case 'en_chenil':
+      // Nettoie les données spécifiques à la garde à domicile
+      this.passagesPerDay = 1;
+      this.slots = [];
+      break;
+  }
+}
 
   async saveSearch() {
-    const currentUser = await this.storage['get']('current_user');
+    const currentUser = await this.storage.get('current_user');
     if (!currentUser || !currentUser.roles?.includes('petowner')) {
       this.presentToast('Accès refusé : réservé aux petowners', 'danger');
       return;
     }
+
     const formData = new FormData();
-        // Ajout des champs un par un
- const user_id = currentUser.id;
-    console.log('▶️ Sending pet_owner_id =', user_id);
-    formData.append('pet_owner_id', user_id.toString());  
+    const petOwnerId = currentUser.id;
+    console.log('▶️ Sending pet_owner_id =', petOwnerId);
+    formData.append('user_id', petOwnerId);
     formData.append('pet_id', this.newSearch.pet_id);
   formData.append('adresse', this.newSearch.adresse);
   formData.append('description', this.newSearch.description);
   formData.append('care_type', this.newSearch.care_type);
-  formData.append('care_duration', this.newSearch.care_duration);
   formData.append('start_date', this.formatDateToYMD(this.newSearch.start_date));
   formData.append('end_date', this.formatDateToYMD(this.newSearch.end_date));
   formData.append('expected_services', this.newSearch.expected_services);
-  formData.append('remunerationMin', String(this.newSearch.remunerationMin));
-formData.append('remunerationMax', String(this.newSearch.remunerationMax));
-
-  
- 
-
+  formData.append('remunerationMin', String(Number(this.newSearch.remunerationMin)));
+formData.append('remunerationMax', String(Number(this.newSearch.remunerationMax)));
   formData.append('latitude', this.newSearch.latitude);
   formData.append('longitude', this.newSearch.longitude);
+  // Champs conditionnels
+    if (this.newSearch.care_type === 'chez_proprietaire') {
+      formData.append('passages_per_day', this.passagesPerDay.toString());
+      this.slots.forEach((slot, i) => {
+        formData.append(`slots[${i}][start_time]`, slot.start_time);
+        formData.append(`slots[${i}][end_time]`, slot.end_time);
+      });
+    }
+
+  
+
+
   this.searchService.addSearch(formData).subscribe({
      next: () => {
         this.presentToast('Search ajouté avec succès', 'success');
@@ -136,6 +197,16 @@ async presentToast(message: string, color: string = 'primary') {
       position: 'bottom',
     });
     await toast.present();
+  }
+  addSlot() {
+    // Ajoute un créneau vide pour que l'utilisateur le remplisse
+    if (this.slots.length < this.passagesPerDay) {
+      this.slots.push({ start_time: '', end_time: '' });
+    }
+  }
+
+  removeSlot(index: number) {
+    this.slots.splice(index, 1);
   }
 
   getAddressFromCoordinates(lat: number, lng: number): void {
@@ -226,5 +297,70 @@ formatDate(date: string): string {
   const d = new Date(date);
   return d.toLocaleDateString(); // ou d.toISOString().slice(0, 10)
 }
+ extractHHMM(iso: string): string {
+  if (!iso) return '';
+  // Méthode simple par découpage
+  const parts = iso.split('T');
+  if (parts.length < 2) return '';
+  return parts[1].slice(0, 5); // on prend "HH:MM"
+}
+// Nouveau : deux tableaux de flags
+showStartPicker: boolean[] = [];
+showEndPicker: boolean[]   = [];
+
+// Ouvrir / fermer le picker de début
+openStartPicker(i: number)   { this.showStartPicker[i] = true; }
+closeStartPicker(i: number)  { this.showStartPicker[i] = false; }
+
+// Ouvrir / fermer le picker de fin
+openEndPicker(i: number)     { this.showEndPicker[i]   = true; }
+closeEndPicker(i: number)    { this.showEndPicker[i]   = false; }
+
+  // Quand l’heure début est choisie
+  onStartTimeSelected(event: any, i: number) {
+    this.slots[i].start_time = event.detail.value;
+    this.closeStartPicker(i);
+  }
+
+  // Quand l’heure fin est choisie
+  onEndTimeSelected(event: any, i: number) {
+    this.slots[i].end_time = event.detail.value;
+    this.closeEndPicker(i);
+  }
+  // Deux flags séparés
+public showStartDatePicker = false;
+public showEndDatePicker   = false;
+
+// Ouvrir / fermer le picker date de début
+openStartDatePicker()   {
+  (document.activeElement as any)?.blur(); // retire le focus éventuel
+  this.showStartDatePicker = true;
+}
+closeStartDatePicker()  {
+  this.showStartDatePicker = false;
+}
+
+// Ouvrir / fermer le picker date de fin
+openEndDatePicker()     {
+  (document.activeElement as any)?.blur();
+  this.showEndDatePicker = true;
+}
+closeEndDatePicker()    {
+  this.showEndDatePicker = false;
+}
+
+// Handler spécifique pour la date de début
+onStartDateSelected(event: any) {
+  this.newSearch.start_date = event.detail.value;
+  this.closeStartDatePicker();
+}
+
+// Handler spécifique pour la date de fin
+onEndDateSelected(event: any) {
+  this.newSearch.end_date = event.detail.value;
+  this.closeEndDatePicker();
+}
+
+
 
 }

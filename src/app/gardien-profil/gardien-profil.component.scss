@@ -1,0 +1,188 @@
+/*--------------------------------------
+  Variables de thème
+---------------------------------------*/
+:root {
+  --ion-color-primary:   #1dd1a1;   /* turquoise */
+  --ion-color-secondary: #fab820;   /* doré */
+  --ion-color-light:     #fdfaf5;   /* fond clair */
+  --ion-text-base:       #333333;   /* texte principal */
+  --ion-text-secondary:  #666666;   /* texte secondaire */
+  --ion-background-color:#fdfaf5;   /* fond de page */
+  --form-bg:             #ffffff;   /* fond des cards/formulaires */
+  --border-radius:       10px;
+  --box-shadow:          0 4px 12px rgba(0,0,0,0.08);
+  --font-family:         'Quicksand', sans-serif;
+}
+
+/*--------------------------------------
+  Global
+---------------------------------------*/
+ion-content.dashboard {
+  --background: var(--ion-background-color);
+}
+
+body, ion-content, ion-item, ion-label, ion-accordion, ion-card {
+  font-family: var(--font-family);
+  color: var(--ion-text-base);
+}
+
+/*--------------------------------------
+  Header / Toolbar
+---------------------------------------*/
+ion-header,
+ion-toolbar.content {
+  --background: var(--ion-color-primary);
+}
+
+ion-header ion-title,
+ion-toolbar.content ion-title {
+  color: var(--ion-color-light);
+  font-weight: bold;
+}
+
+/*--------------------------------------
+  Accordions
+---------------------------------------*/
+ion-accordion-group {
+  background: transparent;
+}
+
+ion-accordion {
+  --background: var(--form-bg);
+  --color: var(--ion-text-base);
+  margin-bottom: 8px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+
+  ion-item[slot="header"] {
+    --background: transparent;
+    --color: var(--ion-text-base);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    padding: 12px 16px;
+  }
+
+  &[aria-expanded="true"] ion-item[slot="header"] {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-light);
+  }
+}
+
+/*--------------------------------------
+  Ion-item
+---------------------------------------*/
+ion-item {
+  --background: var(--form-bg);
+  --color: var(--ion-text-base);
+  margin: 4px 0;
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius);
+  transition: background 0.2s, color 0.2s;
+}
+
+ion-item:hover {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-light);
+}
+
+/*--------------------------------------
+  Labels & Icons
+---------------------------------------*/
+ion-label {
+  font-weight: 600;
+  color: var(--ion-text-secondary);
+}
+
+.icone {
+  color: var(--ion-color-secondary);
+  font-size: 22px;
+}
+
+/*--------------------------------------
+  Footer / Tabs
+---------------------------------------*/
+ion-footer.custom-footer ion-toolbar,
+ion-footer.custom-footer ion-tab-bar {
+  --background: var(--ion-color-primary);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+}
+
+ion-tab-button {
+  --color: var(--ion-color-light);
+  --color-selected: var(--ion-color-secondary);
+}
+
+ion-tab-button ion-icon {
+  font-size: 24px;
+}
+
+/*--------------------------------------
+  Carte Modal
+---------------------------------------*/
+.map-modal {
+  background: rgba(0,0,0,0.4);
+
+  .map-modal-content {
+    background: var(--form-bg);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    box-shadow: var(--box-shadow);
+  }
+}
+
+/*--------------------------------------
+  Ajustements spécifiques
+---------------------------------------*/
+ion-card.form-section {
+  background: var(--form-bg);
+  margin: 12px 16px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+ion-card-title.section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--ion-text-base);
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+  --background: var(--ion-color-light);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border-radius: var(--border-radius);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+  color: var(--ion-text-base);
+}
+
+/* Placeholder plus subtil */
+ion-input::placeholder,
+ion-textarea::placeholder {
+  color: var(--ion-text-secondary);
+}
+
+/* Boutons génériques */
+ion-button {
+  --background: var(--ion-color-primary);
+  --border-radius: var(--border-radius);
+  color: var(--ion-color-light);
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: var(--box-shadow);
+}
+
+ion-button.fill.clear {
+  color: var(--ion-color-primary);
+}
+
+ion-button.ion-color-light {
+  --color: var(--ion-color-light);
+}
+
+/* Assure qu’on voit bien le segment sélectionné */
+ion-segment-button {
+  --color-checked: var(--ion-color-light);
+  --background-checked: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
+}

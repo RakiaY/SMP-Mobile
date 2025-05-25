@@ -14,8 +14,10 @@ import { DashboardSitterComponent } from './dashboard-sitter/dashboard-sitter.co
 import { AuthGuard } from './guards/auth.guard';
 import { LogoutGuard } from './guards/logout.guard';
 import { FormSearchSitterComponent} from './form-searchsitter/form-searchsitter.component';
+
 import { PetownerProfilComponent } from './petowner-profil/petowner-profil.component';
 import { gardienProfilComponent } from './gardien-profil/gardien-profil.component';
+
 
 export const routes: Routes = [
   { path: '', component: SplashComponent }, // ✅ doit être tout en haut
@@ -33,6 +35,7 @@ export const routes: Routes = [
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
 { path: 'petowner-profil', component: PetownerProfilComponent },
   { path: 'gardien-profil' , component: gardienProfilComponent},
+  { path: 'form-searchsitter' , component: FormSearchSitterComponent},
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
   //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
 

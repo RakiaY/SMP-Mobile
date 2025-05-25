@@ -1,0 +1,148 @@
+/* form-searchsitter.component.scss */
+
+/* Variables couleurs */
+$primary-color: #1dd1a1;   /* turquoise pour header et boutons */
+$icon-color:    #fab820;   /* doré pour les icônes */
+$bg-light:      #ffffff;   /* fond clair */
+$text-default:  #333333;   /* texte principal */
+$text-muted:    #666666;   /* texte secondaire */
+$border-radius: 8px;
+$box-shadow:    0 2px 6px rgba(0, 0, 0, 0.1);
+
+:host ::ng-deep {
+  /* 1) Header et footer */
+  ion-header ion-toolbar,
+  ion-footer ion-toolbar {
+    --background: #1dd1a1 !important;
+  }
+  /* Le titre doit rester blanc */
+  ion-header ion-title,
+  ion-footer ion-title {
+    color: #ffffff !important;
+  }
+
+  /* 2) Boutons | Assure-toi de donner la classe 'map-button' au bouton carte */
+  ion-button.submit-button,
+  ion-button.map-button {
+    --background: #1dd1a1 !important;
+    color: #ffffff !important;
+  }}
+
+/* 2. Header & Footer */
+ion-header,
+ion-footer {
+  ion-toolbar {
+    --background: $primary-color;
+    .toolbar-title,
+    ion-title {
+      color: $bg-light;
+      font-weight: bold;
+    }
+  }
+}
+
+/* 3. Boutons principaux */
+ion-button {
+  --background: $primary-color;
+  color: $bg-light;
+  font-weight: 600;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  text-transform: none;
+}
+
+/* 4. Icônes */
+ion-icon {
+  color: $icon-color;
+  font-size: 20px;
+}
+
+/* 5. Cartes de sections */
+ion-card.form-section,
+ion-card {
+  background: $bg-light;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  margin: 16px 0;
+}
+
+/* 6. Titres de sections */
+ion-card-title.section-title,
+.time-slots-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $primary-color;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+/* 7. Items de formulaire */
+ion-item {
+  --background: $bg-light;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border-radius: $border-radius;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+  margin: 8px 0;
+}
+
+ion-label {
+  color: $text-default;
+  font-weight: 500;
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+  --background: lighten($bg-light, 2%);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border-radius: $border-radius;
+  color: $text-default;
+}
+
+/* 8. Champs date/heure popover */
+ion-popover {
+  --background: $bg-light;
+  --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 9. Grilles et cartes de créneaux */
+.time-slots-container {
+  margin: 16px 0;
+}
+
+.time-slot-card ion-card {
+  margin: 8px 0;
+}
+
+.time-input-group {
+  margin-bottom: 12px;
+}
+
+/* 10. Input passages per day */
+.range-value {
+  margin-top: 4px;
+  color: $text-muted;
+}
+
+/* 11. Carte modal */
+.map-modal {
+  background: rgba(0, 0, 0, 0.4);
+  .map-modal-content {
+    background: $bg-light;
+    padding: 16px;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+  }
+}
+
+/* 12. Footer tabs */
+ion-tab-bar {
+  --background: $primary-color;
+  ion-tab-button {
+    --color: $bg-light;
+    --color-selected: $icon-color;
+  }
+}
