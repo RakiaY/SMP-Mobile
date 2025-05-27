@@ -7,6 +7,7 @@ export interface Search {
   petId:            number;
   petName:          string;
   petType:          string;
+  photo_profil:      string;
   address:          string;
   description:      string;
   careType:         CareType;

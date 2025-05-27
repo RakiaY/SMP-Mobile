@@ -48,7 +48,7 @@
               class="pet-icon"
               name="paw-outline"
               [ngClass]="{ active: req.petted }"
-              (click)="viewPet(req); req.petted = !req.petted">
+              (click)="viewPet(req.petId); req.petted = !req.petted">
             </ion-icon>
             <ion-icon
               class="like-icon"
@@ -68,9 +68,7 @@
           <div class="owner-detail">
             <strong>Type de garde :</strong> {{ req.careType }}
           </div>
-          <div class="owner-detail">
-            <strong>Durée :</strong> {{ req.duration }}
-          </div>
+          
           <div class="owner-detail">
             <strong>Prix :</strong>
             {{ req.minPrice | currency:'EUR':'symbol' }} - {{ req.maxPrice | currency:'EUR':'symbol' }}
@@ -80,10 +78,7 @@
             {{ req.startDate | date:'dd/MM/yyyy' }} –
             {{ req.endDate   | date:'dd/MM/yyyy' }}
           </div>
-          <div class="owner-detail">
-            <strong>Période :</strong>
-            {{ req.description }}
-          </div>
+          
         </div>
       </ng-container>
     </div>

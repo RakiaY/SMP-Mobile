@@ -23,30 +23,46 @@
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <!-- Animal -->
-      <div class="input-group">
-        <ion-label class="input-label">Mon animal</ion-label>
-        <ion-select 
-          [(ngModel)]="newSearch.pet_id" 
-          name="pet_id" 
-          interface="action-sheet"
-          placeholder="Sélectionnez votre animal">
-          <ion-select-option *ngFor="let pet of Pets" [value]="pet.id">
-            {{ pet.name }} ({{ pet.type }})
-          </ion-select-option>
-        </ion-select>
-      </div>
+      <!-- Animal (custom dropdown sans filtre) -->
+<div class="input-group">
+  <ion-label class="input-label">Mon animal</ion-label>
 
-      <!-- Description -->
-      <div class="input-group">
-        <ion-label class="input-label">Description supplémentaire</ion-label>
-        <ion-textarea
-          [(ngModel)]="newSearch.description"
-          name="description"
-          placeholder="Décrivez vos besoins spécifiques (comportement, santé, etc.)"
-          rows="4">
-        </ion-textarea>
-      </div>
+  <!-- Bouton qui affiche/masque la liste -->
+  <ion-item button detail="false" (click)="togglePetsList()">
+    <ion-label>
+      {{ selectedPet 
+         ? (selectedPet.name + ' (' + selectedPet.type + ')') 
+         : 'Sélectionnez votre animal' }}
+    </ion-label>
+    <ion-icon 
+      slot="end" 
+      [name]="showPetsList ? 'chevron-up-outline' : 'chevron-down-outline'">
+    </ion-icon>
+  </ion-item>
+
+  <!-- Liste déroulante -->
+  <div *ngIf="showPetsList" class="pet-dropdown">
+    <ion-list>
+      <ion-item
+        *ngFor="let pet of Pets"
+        button
+        (click)="selectPet(pet)">
+        <ion-avatar slot="start">
+          <img
+    [src]="getPetPhotoUrl(pet.photo_profil)"
+    [alt]="pet.name"
+    class="pet-avatar"
+  />
+        </ion-avatar>
+        <ion-label>
+          <h3>{{ pet.name }}</h3>
+          <p>{{ pet.type }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+</div>
+
     </ion-card-content>
   </ion-card>
 
@@ -72,100 +88,137 @@
 
 <!-- Section spécifique "chez moi" - cachée par défaut -->
 <div *ngIf="newSearch.care_type === 'chez_proprietaire'" class="form-section">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title class="section-title">
-        <ion-icon name="time-outline"></ion-icon>
-        Détails pour garde à domicile
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <!-- Nombre de passages -->
-      <div class="input-group">
-        <ion-label class="input-label">Nombre de visites quotidiennes</ion-label>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title class="section-title">
+          <ion-icon name="time-outline"></ion-icon>
+          Détails pour garde à domicile
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Champ caché pour passagesPerDay -->
         <ion-input
-      type="number"
-      [(ngModel)]="passagesPerDay"
-      (ionChange)="onPassagesPerDayChange($event.detail.value)">
-    </ion-input>
-        <div class="range-value">{{ passagesPerDay }} visite(s) par jour</div>
-      </div>
+          type="hidden"
+          [(ngModel)]="passagesPerDay"
+          name="passages_per_day">
+        </ion-input>
 
-      <!-- Créneaux horaires -->
-      <div class="time-slots-container">
-        <h3 class="time-slots-title">Horaires des visites</h3>
-        <div *ngFor="let slot of slots; let i = index" class="time-slot-card">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle>Visite {{ i + 1 }}</ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <!-- Heure de début -->
-      <div class="time-input-group">
-        <ion-label>Heure de début</ion-label>
-       
-      <ion-item lines="full" button (click)="openStartPicker(i)">
-  <ion-input
-    readonly
-    [value]="extractHHMM(slot.start_time)"
-    placeholder="Heure de début">
-  </ion-input>
-  <ion-icon slot="end" name="time-outline"></ion-icon>
-</ion-item>
-<ion-popover
+        <!-- Créneaux horaires -->
+        <div class="time-slots-container">
+          <h3 class="time-slots-title">Horaires des visites</h3>
+
+          <div *ngFor="let slot of slots; let i = index" class="time-slot-card">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-subtitle>Visite {{ i + 1 }}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <!-- Heure de début -->
+                <div class="time-input-group">
+                  <ion-label>Heure de début</ion-label>
+                  <ion-item lines="full" button (click)="openStartPicker(i)">
+                    <ion-input
+   readonly
+   tabindex="-1"
+   style="pointer-events: none"
+   [value]="extractHHMM(slot.start_time)"
+  placeholder="HH:mm">
+ </ion-input>
+                    <ion-icon slot="end" name="time-outline"></ion-icon>
+                  </ion-item>
+                  <ion-popover
   [isOpen]="showStartPicker[i]"
   (didDismiss)="closeStartPicker(i)">
   <ng-template>
-    <ion-datetime
-      presentation="time"
-      display-format="HH:mm"
-      picker-format="HH:mm"
-      [value]="slot.start_time"
-      (ionChange)="onStartTimeSelected($event, i)"
-      cancel-text="Annuler"
-      done-text="OK">
-    </ion-datetime>
+    <ion-content class="ion-padding">
+      <!-- Bind two-way sans ionChange -->
+      <ion-datetime
+        presentation="time"
+        display-format="HH:mm"
+        picker-format="HH:mm"
+        [(ngModel)]="slots[i].start_time">
+      </ion-datetime>
+
+      <!-- Bouton explicite pour fermer le popover -->
+      <ion-button
+  expand="full"
+  fill="solid"
+  color="success"
+  class="ok-button"
+  (click)="closeStartPicker(i)">
+  OK
+</ion-button>
+
+    </ion-content>
   </ng-template>
 </ion-popover>
 
-      </div>
+                </div>
 
-      <!-- Heure de fin -->
-      <div class="time-input-group">
-        <ion-label>Heure de fin</ion-label>
-        <ion-item lines="full" button (click)="openEndPicker(i)">
-  <ion-input
-    readonly
-    [value]="extractHHMM(slot.end_time)"
-    placeholder="Heure de fin">
-  </ion-input>
-  <ion-icon slot="end" name="time-outline"></ion-icon>
-</ion-item>
-<ion-popover
+                <!-- Heure de fin -->
+                <div class="time-input-group">
+                  <ion-label>Heure de fin</ion-label>
+                  <ion-item lines="full" button (click)="openEndPicker(i)">
+                    <ion-input
+                      readonly
+                      [value]="extractHHMM(slot.end_time)"
+                      placeholder="HH:mm">
+                    </ion-input>
+                    <ion-icon slot="end" name="time-outline"></ion-icon>
+                  </ion-item>
+                  <ion-popover
   [isOpen]="showEndPicker[i]"
   (didDismiss)="closeEndPicker(i)">
   <ng-template>
-    <ion-datetime
-      presentation="time"
-      display-format="HH:mm"
-      picker-format="HH:mm"
-      [value]="slot.end_time"
-      (ionChange)="onEndTimeSelected($event, i)"
-      cancel-text="Annuler"
-      done-text="OK">
-    </ion-datetime>
+    <ion-content class="ion-padding">
+      <ion-datetime
+        presentation="time"
+        display-format="HH:mm"
+        picker-format="HH:mm"
+        [(ngModel)]="slots[i].end_time">
+      </ion-datetime>
+<ion-button
+  expand="full"
+  fill="solid"
+  color="success"
+  class="ok-button"
+  (click)="closeEndPicker(i)">
+  OK
+</ion-button>
+    </ion-content>
   </ng-template>
 </ion-popover>
 
-      </div>
-    </ion-card-content>
-  </ion-card>
-</div>
 
-      </div>
-    </ion-card-content>
-  </ion-card>
-</div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+
+          <!-- Bouton pour ajouter un créneau (max 5) -->
+          <!-- Bouton pour ajouter un créneau (max 5) -->
+<ion-button
+  expand="block"
+  fill="solid"
+  color="secondary"
+  (click)="addSlot()"
+  [disabled]="slots.length >= 5">
+  + Ajouter un créneau de visite {{ slots.length + 1 }}
+</ion-button>
+
+<!-- Message une fois la limite atteinte -->
+<ion-note 
+  *ngIf="slots.length >= 5" 
+  color="medium" 
+  class="ion-text-center ion-padding-top">
+  Vous avez atteint le nombre maximal de 5 passages.
+</ion-note>
+
+
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 
   <!-- Section Dates -->
  <ion-card class="form-section">
@@ -318,8 +371,8 @@
       </ion-buttons>
     </ion-toolbar>
     <div id="map" style="height: 70vh; margin: 16px 0;"></div>
-    <ion-button expand="full" (click)="closeMap()">
-      Confirmer 
+    <ion-button expand="full" class="submit-button" (click)="closeMap()">
+      Confirmer l'adresse
     </ion-button>
   </div>
 </div>

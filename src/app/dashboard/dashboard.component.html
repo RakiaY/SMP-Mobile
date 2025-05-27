@@ -15,17 +15,19 @@
       <ion-label>Mes recherches</ion-label>
     </ion-segment-button>
     <ion-segment-button value="articles">
-      <ion-label>Articles de presse</ion-label>
+      <ion-label>Actu</ion-label>
     </ion-segment-button>
+
   </ion-segment>
 
   <!-- Mes recherches -->
   <div *ngIf="selectedSegment==='Annonces'">
     <div class="forum-section">
       <div class="section-header">
-        <h3>Mes recherches</h3>
-        <ion-button fill="clear" (click)="addSearch()">Ajouter une recherche</ion-button>
-      </div>
+<ion-button class=" submit-button" fill="full" (click)="addSearch()">
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      Ajouter une recherche
+    </ion-button>      </div>
 
       <ng-container *ngIf="!loading; else loadingTpl">
         <!-- If there *are* searches -->
@@ -33,9 +35,13 @@
           <ng-container *ngFor="let req of mySearches">
             <div class="request-card">
               <!-- static image -->
-              <img src="/assets/CriticalCondition.png"
-                   alt="Pet Image"
-                   class="pet-image" />
+                         <ion-avatar slot="start">
+
+              <img
+    [src]="getPetPhotoUrl(req.photo_profil)"
+    class="pet-avatar"
+  />
+              </ion-avatar>
 
               <!-- action buttons -->
               <div class="action-buttons">
@@ -48,10 +54,9 @@
               </div>
 
               <!-- existing details -->
-              <div class="owner-name">{{ req.petName }} ({{ req.petId }})</div>
+              <div class="owner-name">{{ req.petName }} </div>
               <div class="owner-detail"><strong>Adresse :</strong> {{ req.address }}</div>
               <div class="owner-detail"><strong>Type de garde :</strong> {{ req.careType }}</div>
-              <div class="owner-detail"><strong>Durée :</strong> {{ req.careDuration }} jours</div>
               <div class="owner-detail">
                 <strong>Prix :</strong>
                 {{ req.minPrice | currency:'EUR':'symbol' }}
@@ -65,7 +70,6 @@
               <div class="owner-detail">
                 <strong>Services attendus :</strong> {{ req.expectedServices }}
               </div>
-              <div class="owner-detail"><strong>Description :</strong> {{ req.description }}</div>
             </div>
           </ng-container>
         </ng-container>
@@ -106,13 +110,15 @@
     <ion-toolbar>
       <ion-tabs>
         <ion-tab-bar slot="bottom">
+          
           <ion-tab-button tab="home"><ion-icon name="home-outline"></ion-icon></ion-tab-button>
-          <ion-tab-button tab="chat" (click)="navigateTo('/form-searchsitter')">
-            <ion-icon name="search-outline"></ion-icon>
-          </ion-tab-button>
           <ion-tab-button tab="add" (click)="navigateTo('/pets')">
             <ion-icon name="add-circle-outline"></ion-icon>
           </ion-tab-button>
+          <ion-tab-button tab="chat" (click)="navigateTo('/messagerie')">
+            <ion-icon name="send-outline"></ion-icon>
+          </ion-tab-button>
+          
           <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
             <ion-icon name="person-outline"></ion-icon>
           </ion-tab-button>

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicModule }       from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule }      from '@angular/common';
 import { FormsModule }       from '@angular/forms';       // ← for [(ngModel)]
 import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule }  from '@angular/common/http';
 import { forkJoin }          from 'rxjs';
 import { Storage }           from '@ionic/storage-angular';
+import { PetProfileModalComponent } from '../pet-profile-modal/pet-profile-modal.component';
 
 import { SearchSitterService }  from '../services/search-sitter.service';
 import { PostulationService }   from '../services/postulation-service.service';
@@ -38,6 +39,7 @@ export class DashboardSitterComponent implements OnInit {
     private searchSvc: SearchSitterService,
     private postSvc:   PostulationService,
     private storage:   Storage,
+    private modalCtrl: ModalController
   ) {}
 
   async ngOnInit() {
@@ -100,10 +102,13 @@ export class DashboardSitterComponent implements OnInit {
   viewOwner(req: PetOwnerRequest) {
     this.router.navigate(['/owner-profile', req.ownerId]);
   }
-  viewPet(req: PetOwnerRequest) {
-    req.petted = !req.petted;
-    this.router.navigate(['/pet-profile', req.petId]);
-  }
+ async viewPet(petId: number) {
+  const modal = await this.modalCtrl.create({
+    component: PetProfileModalComponent,
+    componentProps: { petId }
+  });
+  await modal.present();
+}
   navigateTo(path: string) {
     this.router.navigate([path]);
   }

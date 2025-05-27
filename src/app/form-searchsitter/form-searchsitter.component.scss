@@ -27,6 +27,28 @@ $box-shadow:    0 2px 6px rgba(0, 0, 0, 0.1);
     --background: #1dd1a1 !important;
     color: #ffffff !important;
   }}
+  .pet-dropdown {
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 4px;
+  max-height: 240px;    // laisse défiler si > 5 items
+  overflow-y: auto;
+  margin-top: 4px;
+  background: var(--ion-background-color);
+}
+
+.pet-dropdown ion-item {
+  --inner-padding-end: 8px;
+  --padding-start: 8px;
+}
+.ok-button {
+  --border-radius: 8px;      /* coins arrondis */
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+
 
 /* 2. Header & Footer */
 ion-header,
@@ -90,6 +112,7 @@ ion-item {
 ion-label {
   color: $text-default;
   font-weight: 500;
+  font-size: 18px;
 }
 
 ion-input,

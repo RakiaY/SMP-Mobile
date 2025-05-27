@@ -58,7 +58,7 @@ export class DashboardComponent {
   }
 
   addSearch() {
-    this.router.navigate(['/add-search']);
+    this.router.navigate(['/form-searchsitter']);
   }
 
   editSearch(id: number) {
@@ -81,4 +81,11 @@ export class DashboardComponent {
     });
     await toast.present();
   }
+  getPetPhotoUrl(photoProfil: string | null): string {
+  if (!photoProfil) {
+    return 'assets/default-pet.png';
+  }
+  // S’assure du protocole et du chemin correct
+  return `http://localhost:8000/storage/${photoProfil}`;
+}
 }

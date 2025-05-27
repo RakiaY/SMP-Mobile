@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular'; // Assurez-vous d'importer IonicModule
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Importation de ReactiveFormsModule
@@ -24,6 +24,8 @@ interface Slot {
   standalone:true,
   selector: 'app-form-searchsitter',
   imports: [IonicModule, RouterModule, ReactiveFormsModule,FormsModule, IonicStorageModule, CommonModule],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],   // <— ajoutez ceci
+
     templateUrl: './form-searchsitter.component.html',
   styleUrls: ['./form-searchsitter.component.scss'],
 })
@@ -36,7 +38,6 @@ export class FormSearchSitterComponent   {
     id: null,
     pet_id: '',
     adresse: '',
-    description: '',
     care_type: '',
     start_date: '',
     end_date: '',
@@ -64,7 +65,8 @@ export class FormSearchSitterComponent   {
 }
 
   slots: Array<{ start_time: string; end_time: string }> = [];
-
+showPetsList = false;
+selectedPet: any = null;
   
    map: any;
     marker: any;
@@ -77,7 +79,9 @@ export class FormSearchSitterComponent   {
     private router: Router,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private searchService: SearchSitterService
+    private searchService: SearchSitterService,
+        private fb: FormBuilder,
+
   ) {     this.init();
 }
 
@@ -116,6 +120,23 @@ async init() {
 
     this._storage = storage;
   }
+  togglePetsList() {
+  this.showPetsList = !this.showPetsList;
+}
+
+// Quand l’utilisateur choisit un pet
+selectPet(pet: any) {
+  this.newSearch.pet_id = pet.id;
+  this.selectedPet = pet;
+  this.showPetsList = false;
+}
+getPetPhotoUrl(photoProfil: string | null): string {
+  if (!photoProfil) {
+    return 'assets/default-pet.png';
+  }
+  // S’assure du protocole et du chemin correct
+  return `http://localhost:8000/storage/${photoProfil}`;
+}
 onPassagesPerDayChange(value: string | null | undefined): void {
     const newCount = value ? parseInt(value, 10) : 0;
     this.passagesPerDay = newCount;
@@ -156,7 +177,6 @@ onPassagesPerDayChange(value: string | null | undefined): void {
     formData.append('user_id', petOwnerId);
     formData.append('pet_id', this.newSearch.pet_id);
   formData.append('adresse', this.newSearch.adresse);
-  formData.append('description', this.newSearch.description);
   formData.append('care_type', this.newSearch.care_type);
   formData.append('start_date', this.formatDateToYMD(this.newSearch.start_date));
   formData.append('end_date', this.formatDateToYMD(this.newSearch.end_date));
@@ -198,12 +218,19 @@ async presentToast(message: string, color: string = 'primary') {
     });
     await toast.present();
   }
-  addSlot() {
-    // Ajoute un créneau vide pour que l'utilisateur le remplisse
-    if (this.slots.length < this.passagesPerDay) {
-      this.slots.push({ start_time: '', end_time: '' });
-    }
+ // Dans form-searchsitter.component.ts
+addSlot() {
+  const MAX_SLOTS = 6;
+
+  if (this.slots.length < MAX_SLOTS) {
+    // 1) On ajoute le nouveau créneau vide
+    this.slots.push({ start_time: '', end_time: '' });
+
+    // 2) On met à jour passagesPerDay pour que le formData soit cohérent
+    this.passagesPerDay = this.slots.length;
   }
+}
+
 
   removeSlot(index: number) {
     this.slots.splice(index, 1);
@@ -283,13 +310,7 @@ formatDateToYMD(date: Date | string): string {
 
   birthDate: string = '';           
   birthDateValue: string = '';      
-  showDatePicker: boolean = false; 
-  onDateSelected(event: any) {
-  this.newSearch.start_date = event.detail.value;
-    this.newSearch.end_date = event.detail.value;
 
-  this.showDatePicker = false;
-}
 
 // Pour afficher une date formatée dans le champ
 formatDate(date: string): string {
@@ -309,8 +330,15 @@ showStartPicker: boolean[] = [];
 showEndPicker: boolean[]   = [];
 
 // Ouvrir / fermer le picker de début
-openStartPicker(i: number)   { this.showStartPicker[i] = true; }
-closeStartPicker(i: number)  { this.showStartPicker[i] = false; }
+openStartPicker(i: number) {
+  // enlève le focus pour éviter l'aria-hidden error
+  (document.activeElement as HTMLElement)?.blur();
+  this.showStartPicker[i] = true;
+}
+closeStartPicker(i: number)  { 
+    (document.activeElement as HTMLElement)?.blur();
+
+  this.showStartPicker[i] = false; }
 
 // Ouvrir / fermer le picker de fin
 openEndPicker(i: number)     { this.showEndPicker[i]   = true; }
@@ -319,13 +347,11 @@ closeEndPicker(i: number)    { this.showEndPicker[i]   = false; }
   // Quand l’heure début est choisie
   onStartTimeSelected(event: any, i: number) {
     this.slots[i].start_time = event.detail.value;
-    this.closeStartPicker(i);
   }
 
   // Quand l’heure fin est choisie
   onEndTimeSelected(event: any, i: number) {
     this.slots[i].end_time = event.detail.value;
-    this.closeEndPicker(i);
   }
   // Deux flags séparés
 public showStartDatePicker = false;
@@ -352,13 +378,11 @@ closeEndDatePicker()    {
 // Handler spécifique pour la date de début
 onStartDateSelected(event: any) {
   this.newSearch.start_date = event.detail.value;
-  this.closeStartDatePicker();
 }
 
 // Handler spécifique pour la date de fin
 onEndDateSelected(event: any) {
   this.newSearch.end_date = event.detail.value;
-  this.closeEndDatePicker();
 }
 
 

@@ -12,6 +12,7 @@ interface RawSearch {
   user_name: string;
   pet_name: string;
   pet_type: string;
+  photo_profil: string;
   adresse: string;
   care_type: 'chez_proprietaire' | 'en_chenil';
   description: string;
@@ -38,7 +39,7 @@ export class SearchSitterService {
 
   getRequests(): Observable<PetOwnerRequest[]> {
     return this.http
-      .get<ApiResponse>(`${this.base}/SearchSitter`)
+      .get<ApiResponse>(this.base2)
       .pipe(
         tap(r => console.log('🔍 API returned:', r)),
         map(r => r.Searchs.map(raw => ({
@@ -47,6 +48,7 @@ export class SearchSitterService {
           petId:         raw.pet_id,
           ownerName:     raw.user_name,
           animalName:    raw.pet_name,
+          photoProfil:   raw.photo_profil,
           species:       raw.pet_type,
           address:       raw.adresse,
           careType:      raw.care_type,
@@ -83,7 +85,7 @@ export class SearchSitterService {
   /** Fetch *all* search-pet-sitter records from the API */
   getAll(): Observable<Search[]> {
     return this.http
-      .get<ApiResponse>(`${this.base}/SearchSitter`)
+      .get<ApiResponse>(this.base2)
       .pipe(
         tap(r => console.log('🔍 all searches:', r)),
         map(r => r.Searchs.map(raw => ({
@@ -92,6 +94,7 @@ export class SearchSitterService {
           petId:            raw.pet_id,
           petName:          raw.pet_name,
           petType:          raw.pet_type,
+          photo_profil:      raw.photo_profil,
           address:          raw.adresse,
           description:      raw.description,
           careType:         raw.care_type,

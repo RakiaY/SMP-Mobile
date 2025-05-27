@@ -14,9 +14,14 @@
       <ion-list>
         <ion-item *ngFor="let pet of Pets">
           <ion-avatar slot="start">
-<ion-avatar slot="start">
-  <img [src]= pet.photo_profil />
-</ion-avatar>          </ion-avatar>
+  <img
+    [src]="getPetPhotoUrl(pet.photo_profil)"
+    [alt]="pet.name"
+    class="pet-avatar"
+  />
+</ion-avatar>
+
+
           <ion-label>
             <h3>{{ pet.name }}</h3>
           </ion-label>

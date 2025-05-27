@@ -1,0 +1,70 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Profil de {{ pet.name || 'l’animal' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Photo & infos principales -->
+  <div class="pet-header">
+    <ion-avatar>
+      <img [src]="pet.photo_profil || 'assets/placeholder-pet.png'" />
+    </ion-avatar>
+    <h2>{{ pet.name }} ({{ pet.type }})</h2>
+    <p>{{ pet.breed }}</p>
+<p *ngIf="pet.birth_date">
+  Né(e) le : {{ pet.birth_date | date:'dd/MM/yyyy' }}
+</p>
+
+<!-- Affiche l'âge uniquement si age n'est pas null -->
+<p *ngIf="age !== null">
+  Âge : {{ age }} ans
+</p>  </div>
+
+  <!-- Caractéristiques physiques -->
+  <ion-list>
+    <ion-item>
+      <ion-label>Genre</ion-label>
+      <ion-note slot="end">{{ pet.gender }}</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>Poids</ion-label>
+      <ion-note slot="end">{{ pet.weight || '—' }} kg</ion-note>
+    </ion-item>
+    <ion-item>
+      <ion-label>Taille</ion-label>
+      <ion-note slot="end">{{ pet.taille || '—' }}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <!-- Informations médicales -->
+  <ion-list>
+    <ion-item>
+      <ion-label>Vacciné</ion-label>
+      <ion-icon slot="end" [name]="pet.is_vaccinated ? 'checkmark-circle' : 'close-circle'" [color]="pet.is_vaccinated ? 'success' : 'danger'"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="pet.has_contagious_disease">
+      <ion-label>Maladie contagieuse</ion-label>
+      <ion-icon slot="end" name="alert-circle" color="danger"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>Fichier médical</ion-label>
+      <ion-icon slot="end" [name]="pet.has_medical_file ? 'document-text' : 'document-text-outline'"></ion-icon>
+    </ion-item>
+    <ion-item *ngIf="pet.is_critical_condition">
+      <ion-label><strong>Condition critique</strong></ion-label>
+      <ion-icon slot="end" name="warning" color="danger"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <!-- Description / Comportement -->
+  <div *ngIf="pet.description" class="description">
+    <h3>Notes du propriétaire</h3>
+    <p>{{ pet.description }}</p>
+  </div>
+</ion-content>

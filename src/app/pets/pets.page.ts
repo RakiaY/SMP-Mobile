@@ -24,7 +24,8 @@ export class PetsPage implements OnInit {
     private animalService: AnimalService,
     private router: Router,
         private auth:AuthService,
-            private petService: PetService,  private sanitizer: DomSanitizer
+            private petService: PetService,  
+            private sanitizer: DomSanitizer
 
     
   ) {}
@@ -80,18 +81,16 @@ editPet(petId: number) {
     });
   }
 
-  getPetPhotoUrl(photoProfil: string | null): string {
-  const baseUrl = 'http://localhost:8000/storage/';
+getPetPhotoUrl(photoProfil: string | null): string {
   if (!photoProfil) {
     return 'assets/default-pet.png';
   }
-
-  const fullUrl = baseUrl + photoProfil;
-  console.log('Image URL générée:', fullUrl); // 👈 ajoute ça
-  return fullUrl;
+  // S’assure du protocole et du chemin correct
+  return `http://localhost:8000/storage/${photoProfil}`;
 }
+
 getSanitizedImageUrl(photo_profil: string): SafeResourceUrl {
-  const url = 'http://localhost:8000/storage/' + photo_profil;
+  const url = 'localhost:8000/storage/' + photo_profil;
   return this.sanitizer.bypassSecurityTrustResourceUrl(url);
 }
 
