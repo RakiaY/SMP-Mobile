@@ -17,6 +17,7 @@ import { FormSearchSitterComponent} from './form-searchsitter/form-searchsitter.
 
 import { PetownerProfilComponent } from './petowner-profil/petowner-profil.component';
 import { gardienProfilComponent } from './gardien-profil/gardien-profil.component';
+import { ChatComponent } from './chat/chat.component';
 
 
 export const routes: Routes = [
@@ -33,10 +34,14 @@ export const routes: Routes = [
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:id', component: PetProfilePage },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
-{ path: 'petowner-profil', component: PetownerProfilComponent },
+  { path: 'petowner-profil', component: PetownerProfilComponent },
   { path: 'gardien-profil' , component: gardienProfilComponent},
   { path: 'form-searchsitter' , component: FormSearchSitterComponent},
+  { path: 'chat' , component: ChatComponent},
+
+  // Redirection vers la page d'accueil si le chemin est vide
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
+  // Redirection vers la page d'accueil si le chemin n'est pas trouvé
   //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
 
   {

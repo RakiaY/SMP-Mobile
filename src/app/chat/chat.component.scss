@@ -1,0 +1,57 @@
+/* Reuse your global font, colors, etc. */
+
+.messages {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+
+  .message-in,
+  .message-out {
+    max-width: 75%;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message-in {
+    align-self: flex-start;
+    .bubble {
+      background: #e8fdf8;
+      color: #333;
+      border-radius: 12px 12px 12px 0;
+      padding: 8px 12px;
+    }
+  }
+
+  .message-out {
+    align-self: flex-end;
+    .bubble {
+      background: #1dd1a1;
+      color: #fff;
+      border-radius: 12px 12px 0 12px;
+      padding: 8px 12px;
+    }
+  }
+
+  .timestamp {
+    font-size: 10px;
+    color: #999;
+    margin-top: 4px;
+    align-self: flex-end;
+  }
+}
+
+.chat-input-toolbar {
+  --background: #ffffff;
+  padding: 8px 0;
+
+  ion-item {
+    --background: #f0f0f0;
+    --border-radius: 20px;
+    margin: 0 16px;
+  }
+
+  ion-input {
+    width: 100%;
+  }
+}

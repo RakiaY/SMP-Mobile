@@ -1,0 +1,41 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Chat</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-content">
+  <div class="messages">
+    <ng-container *ngFor="let msg of messages">
+      <div [ngClass]="msg.fromMe ? 'message-out' : 'message-in'">
+        <div class="bubble">{{ msg.text }}</div>
+        <div class="timestamp">{{ msg.timestamp }}</div>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar class="chat-input-toolbar">
+    <ion-item lines="none">
+      <ion-input
+        [(ngModel)]="newMsg"
+        placeholder="Écrire un message…"
+        autofocus>
+      </ion-input>
+      <ion-button
+        slot="end"
+        fill="clear"
+        (click)="sendMessage()"
+        [disabled]="!newMsg.trim()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>
