@@ -17,30 +17,25 @@
     <ion-segment-button value="articles">
       <ion-label>Actu</ion-label>
     </ion-segment-button>
-
   </ion-segment>
 
   <!-- Mes recherches -->
   <div *ngIf="selectedSegment==='Annonces'">
     <div class="forum-section">
       <div class="section-header">
-<ion-button class="submit-button" fill="full" (click)="addSearch()">
-      <ion-icon slot="start" name="search-outline"></ion-icon>
-      Ajouter une recherche
-    </ion-button>      </div>
+        <ion-button class="submit-button" fill="full" (click)="addSearch()">
+          <ion-icon slot="start" name="search-outline"></ion-icon>
+          Ajouter une recherche
+        </ion-button>
+      </div>
 
       <ng-container *ngIf="!loading; else loadingTpl">
-        <!-- If there *are* searches -->
         <ng-container *ngIf="mySearches.length > 0; else noSearchesTpl">
           <ng-container *ngFor="let req of mySearches">
             <div class="request-card">
-              <!-- static image -->
-                         <ion-avatar slot="start">
-
-              <img
-    [src]="getPetPhotoUrl(req.photo_profil)"
-    class="pet-avatar"
-  />
+              <!-- avatar -->
+              <ion-avatar slot="start">
+                <img [src]="getPetPhotoUrl(req.photo_profil)" class="pet-avatar" />
               </ion-avatar>
 
               <!-- action buttons -->
@@ -53,20 +48,46 @@
                 </ion-button>
               </div>
 
-              <!-- existing details -->
-              <div class="owner-name">{{ req.petName }} </div>
-              <div class="owner-detail"><strong>Adresse :</strong> {{ req.address }}</div>
-              <div class="owner-detail"><strong>Type de garde :</strong> {{ req.careType }}</div>
+              <!-- reordered details -->
+              <div class="owner-name">{{ req.petName }}</div>
+
+              <!-- 1. Type de garde -->
+              <div class="owner-detail">
+                <strong>Type de garde :</strong>
+                {{ req.careType === 'chez_proprietaire' ? 'Chez propriétaire' : 'En chenil' }}
+              </div>
+
+              <!-- 2. Si chez propriétaire, passages et créneaux -->
+              <ng-container *ngIf="req.careType === 'chez_proprietaire'">
+                <div class="owner-detail">
+                  <strong>Nombre de passages/jour :</strong> {{ req.passagesPerDay }}
+                </div>
+                <ng-container *ngFor="let slot of req.slots">
+                  <div class="owner-detail">
+                    <strong>Passage {{ slot.slotOrder }} :</strong>
+                    {{ slot.startTime }} – {{ slot.endTime }}
+                  </div>
+                </ng-container>
+              </ng-container>
+
+              <!-- 3. Adresse -->
+              <div class="owner-detail">
+                <strong>Adresse :</strong> {{ req.address }}
+              </div>
+
+              <!-- 4. Prix -->
               <div class="owner-detail">
                 <strong>Prix :</strong>
-                {{ req.minPrice | currency:'EUR':'symbol' }}
-                 – {{ req.maxPrice | currency:'EUR':'symbol' }}
+                {{ req.minPrice | currency:'EUR':'symbol' }} – {{ req.maxPrice | currency:'EUR':'symbol' }}
               </div>
+
+              <!-- 5. Période -->
               <div class="owner-detail">
                 <strong>Période :</strong>
-                {{ req.startDate | date:'dd/MM/yyyy' }} –
-                {{ req.endDate   | date:'dd/MM/yyyy' }}
+                {{ req.startDate | date:'dd/MM/yyyy' }} – {{ req.endDate | date:'dd/MM/yyyy' }}
               </div>
+
+              <!-- 6. Services attendus -->
               <div class="owner-detail">
                 <strong>Services attendus :</strong> {{ req.expectedServices }}
               </div>
@@ -74,16 +95,16 @@
           </ng-container>
         </ng-container>
 
-        <!-- empty-state when no searches -->
+        <!-- no searches -->
         <ng-template #noSearchesTpl>
           <div class="no-searches">
             <ion-icon name="paw-outline"></ion-icon>
             <p>Vous n’avez aucune recherche pour le moment.</p>
-            
           </div>
         </ng-template>
       </ng-container>
 
+      <!-- loading skeleton -->
       <ng-template #loadingTpl>
         <ion-skeleton-text animated="true" style="width:100%;height:80px"></ion-skeleton-text>
       </ng-template>
@@ -106,20 +127,21 @@
     </div>
   </div>
 
+  <!-- Footer tabs -->
   <ion-footer class="custom-footer">
     <ion-toolbar>
       <ion-tabs>
         <ion-tab-bar slot="bottom">
-          
-          <ion-tab-button tab="home"><ion-icon name="home-outline"></ion-icon></ion-tab-button>
+          <ion-tab-button tab="home" (click)="navigateTo('/dashboard')">
+            <ion-icon name="home-outline"></ion-icon>
+          </ion-tab-button>
           <ion-tab-button tab="add" (click)="navigateTo('/pets')">
             <ion-icon name="add-circle-outline"></ion-icon>
           </ion-tab-button>
-          <ion-tab-button tab="chat" (click)="navigateTo('/messagerie')">
+          <ion-tab-button tab="chat" (click)="navigateTo('/chat-list')">
             <ion-icon name="send-outline"></ion-icon>
           </ion-tab-button>
-          
-          <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
+          <ion-tab-button tab="profile" (click)="navigateTo('/petowner-profile')">
             <ion-icon name="person-outline"></ion-icon>
           </ion-tab-button>
         </ion-tab-bar>

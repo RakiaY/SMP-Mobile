@@ -18,6 +18,7 @@ export interface PetOwnerRequest {
   petId:       number;
   ownerName:   string;
   animalName:  string;
+  photoProfil?: string; 
   species:     string;
   address:     string;
   careType:    CareType;
@@ -26,8 +27,16 @@ export interface PetOwnerRequest {
   endDate:     Date;
   minPrice:    number;
   maxPrice:    number;
-  description:  string;
-
+  //expectedServices: string;
+  //passagesPerDay?: number; // optional, not always present
+  //slots?: {
+  //  slot_order: number; // the order of the slot
+  //  start_time: string; // the start time of the slot}
+  //  end_time:   string; // the end time of the slot
+  //}[];
+  
+  // toggles for the UI
+  //postulated: boolean; // controls the postulate button
   liked:     boolean;  // controls heart vs. heart-outline
   petted:    boolean;  // controls paw highlight
 }

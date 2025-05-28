@@ -1,0 +1,40 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Conversations</ion-title>
+    <ion-buttons slot="end">
+      <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dashboard-content">
+  <ion-list>
+    <ion-item
+      *ngFor="let th of threads"
+      button
+      [routerLink]="['/chat']"
+      lines="full"
+    >
+      <ion-avatar slot="start">
+        <img [src]="th.avatarUrl" alt="{{ th.name }}" />
+      </ion-avatar>
+
+      <ion-label>
+        <h3>{{ th.name }}</h3>
+        <p>{{ th.lastMessage }}</p>
+      </ion-label>
+
+      <ion-note slot="end" class="timestamp">{{ th.timestamp }}</ion-note>
+      <ion-badge
+        *ngIf="th.unreadCount"
+        slot="end"
+        class="unread-badge"
+      >
+        {{ th.unreadCount }}
+      </ion-badge>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,13 +1,15 @@
-import { Component, OnInit }    from '@angular/core';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { CommonModule }          from '@angular/common';
-import { RouterModule, Router }  from '@angular/router';
-import { HttpClientModule }      from '@angular/common/http';
-import { Storage }               from '@ionic/storage-angular';
-import { FormsModule }           from '@angular/forms';
+// src/app/dashboard/dashboard.component.ts
 
-import { SearchSitterService }   from '../services/search-sitter.service';
-import { Search }                from '../models/search.model';
+import { Component, OnInit }      from '@angular/core';
+import { IonicModule, ToastController } from '@ionic/angular';
+import { CommonModule }            from '@angular/common';
+import { RouterModule, Router }    from '@angular/router';
+import { HttpClientModule }        from '@angular/common/http';
+import { FormsModule }             from '@angular/forms';
+import { Storage }                 from '@ionic/storage-angular';
+
+import { SearchSitterService }     from '../services/search-sitter.service';
+import { Search }                  from '../models/search.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,38 +24,50 @@ import { Search }                from '../models/search.model';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   selectedSegment: 'Annonces' | 'articles' = 'Annonces';
   mySearches: Search[] = [];
   loading = true;
   private ownerId!: number;
-
   
-    
-    
   constructor(
-    private router:       Router,
-    private searchSvc:    SearchSitterService,
-    private storage:      Storage,
-    private toastCtrl:    ToastController
+    private router:    Router,
+    private storage:   Storage,
+    private searchSvc: SearchSitterService,
+    private toastCtrl: ToastController
   ) {}
 
   async ngOnInit() {
-     // Initialisation si nécessaire
-      console.log('Dashboard loaded');
-    const current = await this.storage.get('current_user');
-    this.ownerId = current?.id;
+    // Initialize the Ionic Storage instance
+    await this.storage.create();
 
+    // Try to get the current user
+    const current = await this.storage.get('current_user');
+    if (!current || !current.id) {
+      // No user: redirect to login or show a message
+      this.presentToast('Utilisateur non connecté', 'warning');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    this.ownerId = current.id;
+    this.loadSearches();
+  }
+
+  private loadSearches() {
+    this.loading = true;
     this.searchSvc.getAll().subscribe({
-      next: (all: any[]) => {
+      next: (all) => {
         this.mySearches = all.filter(s => s.ownerId === this.ownerId);
         this.loading = false;
-
         if (this.mySearches.length === 0) {
-          this.presentEmptyToast();
+          this.presentToast("Vous n'avez aucune recherche pour le moment.", 'medium');
         }
       },
-      error: () => this.loading = false,
+      error: () => {
+        this.loading = false;
+        this.presentToast('Erreur de chargement', 'danger');
+      }
     });
   }
 
@@ -62,30 +76,38 @@ export class DashboardComponent {
   }
 
   editSearch(id: number) {
-    this.router.navigate(['/edit-search', id]);
+    this.router.navigate(['/form-searchsitter', id]);
   }
 
   deleteSearch(id: number) {
-    // your deletion logic here…
+    this.searchSvc.deleteSearch(id).subscribe({
+      next: () => {
+        this.presentToast('Recherche supprimée avec succès', 'success');
+        this.loadSearches();
+      },
+      error: () => {
+        this.presentToast('Erreur lors de la suppression', 'danger');
+      }
+    });
   }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
 
-  private async presentEmptyToast() {
+  private async presentToast(message: string, color: string) {
     const toast = await this.toastCtrl.create({
-      message: "Vous n'avez aucune recherche pour le moment.",
-      duration: 3000,
-      position: 'bottom'
+      message,
+      duration: 2000,
+      color
     });
     await toast.present();
   }
+
   getPetPhotoUrl(photoProfil: string | null): string {
-  if (!photoProfil) {
-    return 'assets/default-pet.png';
+    if (!photoProfil) {
+      return 'assets/default-pet.png';
+    }
+    return `http://localhost:8000/storage/${photoProfil}`;
   }
-  // S’assure du protocole et du chemin correct
-  return `http://localhost:8000/storage/${photoProfil}`;
-}
 }
