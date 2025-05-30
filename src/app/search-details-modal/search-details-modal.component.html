@@ -1,0 +1,95 @@
+<!-- src/app/search-details-modal/search-details-modal.component.html -->
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Détails de la recherche</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- owner & animal -->
+  <ion-item>
+    <ion-label>
+      <h2>{{ request.ownerName }}</h2>
+      <p>Animal : {{ request.animalName }} ({{ request.species }})</p>
+    </ion-label>
+  </ion-item>
+
+  <!-- care type -->
+  <ion-item>
+    <ion-label>
+      <strong>Type de garde :</strong>
+      {{ request.careType === 'chez_proprietaire'
+         ? 'Chez propriétaire'
+         : 'En chenil' }}
+    </ion-label>
+  </ion-item>
+
+  <!-- slots if chez propriétaire -->
+  <ng-container *ngIf="request.careType === 'chez_proprietaire'">
+    <ion-item>
+      <ion-label>
+        <strong>Passages/jour :</strong> {{ request.passagesPerDay }}
+      </ion-label>
+    </ion-item>
+    <ng-container *ngFor="let s of request.slots">
+      <ion-item>
+        <ion-label>
+          <strong>Créneau {{ s.slotOrder }} :</strong>
+          {{ s.startTime }} – {{ s.endTime }}
+        </ion-label>
+      </ion-item>
+    </ng-container>
+  </ng-container>
+
+  <!-- address -->
+  <ion-item>
+    <ion-label>
+      <strong>Adresse :</strong> {{ request.address }}
+    </ion-label>
+  </ion-item>
+
+  <!-- price -->
+  <ion-item>
+    <ion-label>
+      <strong>Prix :</strong>
+      {{ request.minPrice | currency:'EUR':'symbol' }}
+      –
+      {{ request.maxPrice | currency:'EUR':'symbol' }}
+    </ion-label>
+  </ion-item>
+
+  <!-- period -->
+  <ion-item>
+    <ion-label>
+      <strong>Période :</strong>
+      {{ request.startDate | date:'dd/MM/yyyy' }}
+      –
+      {{ request.endDate   | date:'dd/MM/yyyy' }}
+    </ion-label>
+  </ion-item>
+
+  <!-- expected services -->
+  <ion-item>
+    <ion-label>
+      <strong>Services attendus :</strong>
+      {{ request.expectedServices || 'Aucun détail' }}
+    </ion-label>
+  </ion-item>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+      expand="full"
+      [color]="buttonColor"
+      *ngIf="buttonLabel"
+      (click)="togglePostulation()">
+      {{ buttonLabel }}
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

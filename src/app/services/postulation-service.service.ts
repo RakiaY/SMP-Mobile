@@ -36,4 +36,9 @@ export class PostulationService {
       .put<UpdateResp>(`${this.base}/updateStatut/${postulationId}`, { statut })
       .pipe(map(r => r.postulation));
   }
+  getAll(): Observable<any[]> {
+  return this.http
+    .get<{ Postulations: any[] }>(`${this.base}`)
+    .pipe(map(r => r.Postulations));
+}
 }

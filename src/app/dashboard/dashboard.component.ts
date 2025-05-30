@@ -3,13 +3,14 @@
 import { Component, OnInit }      from '@angular/core';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { CommonModule }            from '@angular/common';
-import { RouterModule, Router }    from '@angular/router';
+import { RouterModule, Router, NavigationEnd }    from '@angular/router';
 import { HttpClientModule }        from '@angular/common/http';
 import { FormsModule }             from '@angular/forms';
 import { Storage }                 from '@ionic/storage-angular';
 
 import { SearchSitterService }     from '../services/search-sitter.service';
 import { Search }                  from '../models/search.model';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,6 +26,7 @@ import { Search }                  from '../models/search.model';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+
   selectedSegment: 'Annonces' | 'articles' = 'Annonces';
   mySearches: Search[] = [];
   loading = true;
@@ -38,6 +40,15 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    // initial load
+    this.loadSearches();
+
+    // re–load on every NavigationEnd (i.e. whenever you router.navigate back here)
+    this.router.events
+      .pipe(filter(ev => ev instanceof NavigationEnd))
+      .subscribe(() => {
+        this.loadSearches();
+      });
     // Initialize the Ionic Storage instance
     await this.storage.create();
 
@@ -54,6 +65,8 @@ export class DashboardComponent implements OnInit {
     this.loadSearches();
   }
 
+  
+
   private loadSearches() {
     this.loading = true;
     this.searchSvc.getAll().subscribe({
@@ -61,7 +74,7 @@ export class DashboardComponent implements OnInit {
         this.mySearches = all.filter(s => s.ownerId === this.ownerId);
         this.loading = false;
         if (this.mySearches.length === 0) {
-          this.presentToast("Vous n'avez aucune recherche pour le moment.", 'medium');
+          //this.presentToast("Vous n'avez aucune recherche pour le moment.", 'medium');
         }
       },
       error: () => {
@@ -80,6 +93,9 @@ export class DashboardComponent implements OnInit {
   }
 
   deleteSearch(id: number) {
+    if (!confirm("Voulez-vous vraiment supprimer cet animal ?")) {
+      return;
+    }
     this.searchSvc.deleteSearch(id).subscribe({
       next: () => {
         this.presentToast('Recherche supprimée avec succès', 'success');

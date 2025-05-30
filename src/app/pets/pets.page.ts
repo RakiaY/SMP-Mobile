@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { AnimalService, Animal } from '../services/animal.service';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { PetService } from '../services/pet.service';
@@ -14,85 +13,59 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './pets.page.html',
   styleUrls: ['./pets.page.scss'],
 })
-// src/app/pets/pets.page.ts
 export class PetsPage implements OnInit {
-  animals: Animal[] = [];
-      Pets: any[] = [];
-
+  Pets: any[] = [];
 
   constructor(
-    private animalService: AnimalService,
     private router: Router,
-        private auth:AuthService,
-            private petService: PetService,  
-            private sanitizer: DomSanitizer
-
-    
+    private auth: AuthService,
+    private petService: PetService,
+    private sanitizer: DomSanitizer
   ) {}
 
-   async ngOnInit() {
-     const user = await this.auth.getCurrentUser();
-    console.log('USER CONNECTÉ:', user); // ✅ Ajoute ça
-
+  async ngOnInit() {
+    const user = await this.auth.getCurrentUser();
     if (user?.id) {
       this.petService.getPetsByOwner(user.id).subscribe({
-        next: (pets) => {
-          this.Pets = pets;
-          console.log('Mes animaux:', this.Pets);
-        },
-        error: (err) => {
-          console.error('Erreur de chargement des animaux:', err);
-        }
+        next: (pets) => (this.Pets = pets),
+        error: (err) =>
+          console.error('Erreur de chargement des animaux:', err),
       });
     } else {
       console.warn("Aucun utilisateur connecté.");
     }
-  
   }
 
   goToAdd() {
     this.router.navigateByUrl('/pets/add');
   }
-  
-editPet(petId: number) {
-  this.router.navigateByUrl(`/pets/edit/${petId}`);
-}
 
-  /** Supprimer après confirmation */
-  deleteAnimal(i: number) {
-    if (confirm('Voulez‑vous vraiment supprimer cet animal ?')) {
-      this.animalService.removeAnimal(i);
-    }
+  editPet(petId: number) {
+    this.router.navigateByUrl(`/pets/edit/${petId}`);
   }
 
-  /** Modifier via de simples prompts (ou rediriger vers un formulaire pré‑rempli) */
-  editAnimal(i: number) {
-    const current = this.animals[i];
-    const newName = prompt('Modifier le nom', current.name);
-    if (newName === null) return; // annulation
-
-    const newDesc = prompt('Modifier la description', current.description);
-    if (newDesc === null) return;
-
-    this.animalService.updateAnimal(i, {
-      ...current,
-      name: newName,
-      description: newDesc
+  deletePet(petId: number, index: number) {
+    if (!confirm("Voulez-vous vraiment supprimer cet animal ?")) {
+      return;
+    }
+    this.petService.deletePet(petId).subscribe({
+      next: () => {
+        // remove from the UI list
+        this.Pets.splice(index, 1);
+      },
+      error: (err) =>
+        console.error(`Erreur lors de la suppression du pet ${petId}:`, err),
     });
   }
 
-getPetPhotoUrl(photoProfil: string | null): string {
-  if (!photoProfil) {
-    return 'assets/default-pet.png';
+  getPetPhotoUrl(photoProfil: string | null): string {
+    return photoProfil
+      ? `http://localhost:8000/storage/${photoProfil}`
+      : 'assets/default-pet.png';
   }
-  // S’assure du protocole et du chemin correct
-  return `http://localhost:8000/storage/${photoProfil}`;
-}
 
-getSanitizedImageUrl(photo_profil: string): SafeResourceUrl {
-  const url = 'localhost:8000/storage/' + photo_profil;
-  return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-}
-
-
+  getSanitizedImageUrl(photo_profil: string): SafeResourceUrl {
+    const url = 'http://localhost:8000/storage/' + photo_profil;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
 }

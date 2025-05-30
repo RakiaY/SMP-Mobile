@@ -1,0 +1,33 @@
+.notification-content {
+  ion-item {
+    --padding-start: 10px;
+    --inner-padding-end: 10px;
+    border-bottom: 1px solid #ccc;
+
+    ion-label {
+      cursor: pointer;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #666;
+      margin: 0;
+    }
+
+    ion-buttons {
+      ion-button {
+        --padding-start: 6px;
+        --padding-end: 6px;
+        --border-radius: 50%;
+        --background: transparent;
+        color: #888;
+      }
+    }
+  }
+}

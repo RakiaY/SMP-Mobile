@@ -1,7 +1,7 @@
 <ion-header class="custom-header">
   <div class="header-top">
     <h2>Bienvenue <ion-icon name="paw-outline"></ion-icon></h2>
-    <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+    <ion-icon name="notifications-outline" (click)="navigateTo('notifications')" class="notif-icon"></ion-icon>
   </div>
   <div class="welcome-banner">
     <h1>SitMyPet</h1>
@@ -48,46 +48,48 @@
                 </ion-button>
               </div>
 
-              <!-- reordered details -->
-              <div class="owner-name">{{ req.petName }}</div>
+              <!-- 1. Pet name + type -->
+              <div class="owner-name">
+                {{ req.petName }} ({{ req.petType }})
+              </div>
 
-              <!-- 1. Type de garde -->
+              <!-- 2. Type de garde -->
               <div class="owner-detail">
                 <strong>Type de garde :</strong>
                 {{ req.careType === 'chez_proprietaire' ? 'Chez propriétaire' : 'En chenil' }}
               </div>
 
-              <!-- 2. Si chez propriétaire, passages et créneaux -->
+              <!-- 3. Passages & créneaux, si applicable -->
               <ng-container *ngIf="req.careType === 'chez_proprietaire'">
                 <div class="owner-detail">
-                  <strong>Nombre de passages/jour :</strong> {{ req.passagesPerDay }}
+                  <strong>Passages / jour :</strong> {{ req.passagesPerDay }}
                 </div>
                 <ng-container *ngFor="let slot of req.slots">
                   <div class="owner-detail">
-                    <strong>Passage {{ slot.slotOrder }} :</strong>
+                    <strong>Créneau {{ slot.slotOrder }} :</strong>
                     {{ slot.startTime }} – {{ slot.endTime }}
                   </div>
                 </ng-container>
               </ng-container>
 
-              <!-- 3. Adresse -->
-              <div class="owner-detail">
-                <strong>Adresse :</strong> {{ req.address }}
-              </div>
-
-              <!-- 4. Prix -->
-              <div class="owner-detail">
-                <strong>Prix :</strong>
-                {{ req.minPrice | currency:'EUR':'symbol' }} – {{ req.maxPrice | currency:'EUR':'symbol' }}
-              </div>
-
-              <!-- 5. Période -->
+              <!-- 4. Période -->
               <div class="owner-detail">
                 <strong>Période :</strong>
                 {{ req.startDate | date:'dd/MM/yyyy' }} – {{ req.endDate | date:'dd/MM/yyyy' }}
               </div>
 
-              <!-- 6. Services attendus -->
+              <!-- 5. Prix -->
+              <div class="owner-detail">
+                <strong>Prix :</strong>
+                {{ req.minPrice | currency:'EUR':'symbol' }} – {{ req.maxPrice | currency:'EUR':'symbol' }}
+              </div>
+
+              <!-- 6. Adresse -->
+              <div class="owner-detail">
+                <strong>Adresse :</strong> {{ req.address }}
+              </div>
+
+              <!-- 7. Services attendus -->
               <div class="owner-detail">
                 <strong>Services attendus :</strong> {{ req.expectedServices }}
               </div>
@@ -135,11 +137,11 @@
           <ion-tab-button tab="home" (click)="navigateTo('/dashboard')">
             <ion-icon name="home-outline"></ion-icon>
           </ion-tab-button>
+          <ion-tab-button tab="chat" (click)="navigateTo('/chat-list')">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+          </ion-tab-button>
           <ion-tab-button tab="add" (click)="navigateTo('/pets')">
             <ion-icon name="add-circle-outline"></ion-icon>
-          </ion-tab-button>
-          <ion-tab-button tab="chat" (click)="navigateTo('/chat-list')">
-            <ion-icon name="send-outline"></ion-icon>
           </ion-tab-button>
           <ion-tab-button tab="profile" (click)="navigateTo('/petowner-profile')">
             <ion-icon name="person-outline"></ion-icon>

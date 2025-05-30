@@ -54,7 +54,8 @@
   padding: 20px 16px;
   padding-bottom: 80px; /* to clear footer */
 }
-  .pet-avatar {
+
+.pet-avatar {
   width: 48px;
   height: 48px;
   object-fit: cover;
@@ -126,10 +127,10 @@ ion-segment {
       padding: 4px 8px 8px 4px;
     }
   }
-ion-button.submit-button {
-  --color: #1dd1a1 !important;  /* texte et icône en vert */
-}
 
+  ion-button.submit-button {
+    --color: #1dd1a1 !important;  /* texte et icône en vert */
+  }
 }
 
 /* — Forum (Searches) Section — */
@@ -149,11 +150,40 @@ ion-button.submit-button {
   margin-top: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 
-  /* pet image + name in one row */
-  > img.pet-image,
-  > .owner-name {
-    display: inline-block;
-    vertical-align: middle;
+  /* new flex layout so avatar + name line up, actions to the right, details below */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  ion-avatar {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  .owner-name {
+    color:#333;
+    order: 2;
+    flex: 0 1 auto;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 0 12px;
+  }
+
+  .action-buttons {
+    order: 3;
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .owner-detail {
+    order: 4;
+    flex: 1 1 100%;
+    margin-top: 12px;
+    font-size: 16px;
+    color: #666;
   }
 }
 
@@ -166,26 +196,11 @@ ion-button.submit-button {
   margin-right: 12px;
 }
 
-/* pet name */
-.owner-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-}
-
-/* detail lines */
-.owner-detail {
-  margin-top: 12px;
-  font-size: 16px;
-  color: #666;
-}
-
-/* vertical action buttons at top-right */
-.action-buttons {
+/* fallback vertical action-buttons */
+.action-buttons.absolute {
   position: absolute;
   top: 16px;
   right: 16px;
-  display: flex;
   flex-direction: column;
   gap: 8px;
 }
@@ -248,15 +263,27 @@ ion-button.submit-button {
     }
   }
 }
-.submit-button{
+
+.submit-button {
   --background: #1dd1a1 !important; /* bouton vert */
-  --color: #fff !important; /* texte blanc */
+  --color: #fff !important;          /* texte blanc */
   --border-radius: 20px;
   font-weight: bold;
   font-size: 16px;
   padding: 10px 20px;
 }
-@media (max-width: 360px) {
 
-  /* add responsive tweaks here if needed */
+@media (max-width: 360px) {
+  .request-card {
+    padding: 12px;
+    gap: 4px;
+  }
+  .request-card .owner-name {
+    font-size: 16px;
+    margin-left: 8px;
+  }
+  .request-card .owner-detail {
+    font-size: 14px;
+    margin-top: 8px;
+  }
 }

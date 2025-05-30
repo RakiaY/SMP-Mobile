@@ -1,0 +1,10 @@
+/* src/app/search-details-modal/search-details-modal.component.scss */
+ion-item {
+  --inner-padding-start: 16px;
+  --inner-padding-end:   16px;
+}
+ion-footer {
+  ion-button {
+    font-weight: 600;
+  }
+}

@@ -1,17 +1,21 @@
+// src/app/dashboard-sitter/dashboard-sitter.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { CommonModule }      from '@angular/common';
-import { FormsModule }       from '@angular/forms';       // ← for [(ngModel)]
+import { FormsModule }       from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule }  from '@angular/common/http';
 import { forkJoin }          from 'rxjs';
 import { Storage }           from '@ionic/storage-angular';
+import { SearchDetailsModalComponent } from '../search-details-modal/search-details-modal.component';
+import { SearchSitterService } from '../services/search-sitter.service';
+import { PostulationService }  from '../services/postulation-service.service';
+import {
+  PetOwnerRequest,
+  PostulationStatut
+} from '../models/pet-owner-request.model';
 import { PetProfileModalComponent } from '../pet-profile-modal/pet-profile-modal.component';
-
-import { SearchSitterService }  from '../services/search-sitter.service';
-import { PostulationService }   from '../services/postulation-service.service';
-import { PetOwnerRequest,
-         PostulationStatut }     from '../models/pet-owner-request.model';
 
 @Component({
   selector: 'app-dashboard-sitter',
@@ -19,7 +23,7 @@ import { PetOwnerRequest,
   imports: [
     IonicModule,
     CommonModule,
-    FormsModule,    // ← needed for ngModel
+    FormsModule,
     HttpClientModule,
     RouterModule,
   ],
@@ -27,12 +31,11 @@ import { PetOwnerRequest,
   styleUrls: ['./dashboard-sitter.component.scss'],
 })
 export class DashboardSitterComponent implements OnInit {
-  // controls which tab is shown
   selectedSegment: 'demandes' | 'articles' = 'demandes';
-
   petOwnerRequests: PetOwnerRequest[] = [];
   loading = true;
   private sitterId = 0;
+  private closedSearchIds = new Set<number>();
 
   constructor(
     private router:    Router,
@@ -49,26 +52,27 @@ export class DashboardSitterComponent implements OnInit {
 
     forkJoin({
       searches: this.searchSvc.getRequests(),
-      posts:    this.postSvc.bySitter(this.sitterId)
+      myPosts:  this.postSvc.bySitter(this.sitterId),
+      allPosts: this.postSvc.getAll()
     }).subscribe({
-      next: ({ searches, posts }) => {
-        const bySearch = new Map<number, { id:number; statut:string }>();
-        posts.forEach(p => bySearch.set(p.search_id, {
-          id: p.id, statut: p.statut
-        }));
+      next: ({ searches, myPosts, allPosts }) => {
+        allPosts.forEach(p => {
+          if (p.statut === 'en cours' || p.statut === 'terminée') {
+            this.closedSearchIds.add(p.search_id);
+          }
+        });
+
+        const myMap = new Map<number, { id:number; statut:PostulationStatut }>();
+        myPosts.forEach(p =>
+          myMap.set(p.search_id, { id: p.id, statut: p.statut as PostulationStatut })
+        );
 
         this.petOwnerRequests = searches.map(r => {
-          const hit = bySearch.get(r.searchId);
-          const raw = hit?.statut;
-          const statut = (raw==='en_attente' || raw==='annulée')
-            ? raw as PostulationStatut
-            : undefined;
-
-          return {
-            ...r,
+          const hit = myMap.get(r.searchId);
+          return { ...r,
             postulationId: hit?.id,
-            statut,
-            liked: statut==='en_attente'
+            statut:        hit?.statut,
+            liked:         hit?.statut === 'en_attente',
           };
         });
         this.loading = false;
@@ -77,42 +81,88 @@ export class DashboardSitterComponent implements OnInit {
     });
   }
 
+  get openRequests(): PetOwnerRequest[] {
+    return this.petOwnerRequests.filter(r => {
+      if (this.closedSearchIds.has(r.searchId)) return false;
+      const st = r.statut;
+      const freeOrAnnulee = !r.postulationId || st === 'annulée';
+      const notClosedSelf  = st !== 'en cours' && st !== 'terminée';
+      return freeOrAnnulee && notClosedSelf;
+    });
+  }
+
+  get postulatedRequests(): PetOwnerRequest[] {
+    return this.petOwnerRequests.filter(r => !!r.postulationId);
+  }
+
   togglePostulation(req: PetOwnerRequest) {
     if (!req.postulationId) {
       this.postSvc.applyToSearch(req.searchId, this.sitterId)
         .subscribe(p => {
           req.postulationId = p.id;
-          req.statut        = p.statut;
+          req.statut        = p.statut as PostulationStatut;
           req.liked         = true;
         });
       return;
     }
-    const next = req.statut==='en_attente' ? 'annulée' : 'en_attente';
-    this.postSvc.updateStatus(req.postulationId, next)
-      .subscribe(p => {
-        req.statut = p.statut;
-        req.liked  = p.statut==='en_attente';
-      });
-  }
-
-  get pendingPostulations() {
-    return this.petOwnerRequests.filter(r => r.statut==='en_attente');
+    if (req.statut === 'annulée') {
+      this.postSvc.updateStatus(req.postulationId, 'en_attente')
+        .subscribe(p => {
+          req.statut = p.statut as PostulationStatut;
+          req.liked  = true;
+        });
+      return;
+    }
+    if (req.statut === 'en_attente') {
+      this.postSvc.updateStatus(req.postulationId, 'annulée')
+        .subscribe(p => {
+          req.statut = p.statut as PostulationStatut;
+          req.liked  = false;
+        });
+    }
   }
 
   viewOwner(req: PetOwnerRequest) {
     this.router.navigate(['/owner-profile', req.ownerId]);
   }
- async viewPet(petId: number) {
-  const modal = await this.modalCtrl.create({
-    component: PetProfileModalComponent,
-    componentProps: { petId }
-  });
-  await modal.present();
-}
-  navigateTo(path: string) {
-    this.router.navigate([path]);
+  async viewPet(petId: number) { 
+    const modal = await this.modalCtrl.create({
+      component: PetProfileModalComponent,
+      componentProps: { petId }
+    });
+    await modal.present();
+   }
+  navigateTo(path: string)   { this.router.navigate([path]); }
+  getPetPhotoUrl(p?:string) { return p ? `http://localhost:8000/storage/${p}` : 'assets/default-pet.png'; }
+
+  statusLabel(st?: PostulationStatut) {
+    switch (st) {
+      case 'en_attente': return 'En attente';
+      case 'annulée':    return 'Annulée';
+      case 'validée':    return 'Acceptée';
+      case 'en cours':   return 'En cours';
+      case 'terminée':   return 'Terminée';
+      default:           return '';
+    }
   }
-  getStatusColor(active: boolean) {
-    return active ? 'warning' : 'medium';
+  statusColor(st?: PostulationStatut) {
+    switch (st) {
+      case 'en_attente': return 'warning';
+      case 'annulée':    return 'danger';
+      case 'validée':    return 'success';
+      case 'en cours':   return 'primary';
+      case 'terminée':   return 'dark';
+      default:           return 'medium';
+    }
+  }
+  async viewRequestDetails(req: PetOwnerRequest) {
+    const modal = await this.modalCtrl.create({
+      component: SearchDetailsModalComponent,
+      componentProps: {
+        request: req,
+        sitterId: this.sitterId
+      }
+    });
+    await modal.present();
   }
 }

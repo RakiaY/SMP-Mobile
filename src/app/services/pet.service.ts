@@ -14,8 +14,8 @@ export class PetService {
     return this.http.post(`${this.baseUrl}/add`, data);
   }
 
-  updatePet(id: number, data: FormData): Observable<any> {
-    return this.http.put(`${this.baseUrl}/update/${id}`, data);
+  updatePet(id: number, data: FormData) {
+    return this.http.post(`${this.baseUrl}/update/${id}`, data);
   }
 
   deletePet(id: number): Observable<any> {

@@ -9,30 +9,39 @@
 
 <ion-content class="pets-content" fullscreen>
   <div class="pets-wrapper">
-    <!-- 🐶 Liste des animaux -->
-    <ng-container  class="animal-item"  *ngIf="Pets.length > 0; else noAnimals">
+    <!-- Liste des animaux -->
+    <ng-container *ngIf="Pets.length > 0; else noAnimals">
       <ion-list>
-        <ion-item *ngFor="let pet of Pets">
+        <!-- capture `i` for the index -->
+        <ion-item *ngFor="let pet of Pets; let i = index">
           <ion-avatar slot="start">
-  <img
-    [src]="getPetPhotoUrl(pet.photo_profil)"
-    [alt]="pet.name"
-    class="pet-avatar"
-  />
-</ion-avatar>
-
+            <img
+              [src]="getPetPhotoUrl(pet.photo_profil)"
+              [alt]="pet.name"
+              class="pet-avatar"
+            />
+          </ion-avatar>
 
           <ion-label>
             <h3>{{ pet.name }}</h3>
           </ion-label>
+
           <ion-buttons slot="end" class="action-buttons">
             <!-- Éditer -->
-            <ion-button fill="clear" size="small"  (click)="editPet(pet.id)" >
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="editPet(pet.id)"
+            >
               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-button>
-      
+
             <!-- Supprimer -->
-            <ion-button fill="clear" size="small" >
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="deletePet(pet.id, i)"
+            >
               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -42,10 +51,15 @@
 
     <ng-template #noAnimals>
       <div class="no-animals">
-        <img src="assets/fig8.png" alt="Aucun animal" class="no-animals-img" />
+        <img
+          src="assets/fig8.png"
+          alt="Aucun animal"
+          class="no-animals-img"
+        />
         <p>Vous n'avez aucun animal.</p>
       </div>
     </ng-template>
+
     <ion-button expand="block" class="add-btn" (click)="goToAdd()">
       Ajouter un animal
     </ion-button>

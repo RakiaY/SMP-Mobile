@@ -1,7 +1,12 @@
+<!-- src/app/dashboard-sitter/dashboard-sitter.component.html -->
+
 <ion-header class="custom-header">
   <div class="header-top">
     <h2>Bienvenue <ion-icon name="paw-outline"></ion-icon></h2>
-    <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
+    <ion-icon name="notifications-outline"
+              class="notif-icon"
+              (click)="navigateTo('notifications')">
+    </ion-icon>
   </div>
   <div class="welcome-banner">
     <h1>SitMyPet</h1>
@@ -10,7 +15,6 @@
 </ion-header>
 
 <ion-content class="dashboard-content" fullscreen>
-  <!-- Segment switch -->
   <ion-segment [(ngModel)]="selectedSegment" color="primary">
     <ion-segment-button value="demandes">
       <ion-label>Demandes de garde</ion-label>
@@ -20,107 +24,130 @@
     </ion-segment-button>
   </ion-segment>
 
-  <!-- DEMANDES DE GARDE -->
+  <!-- ======================= DEMANDES DE GARDE ======================= -->
   <div *ngIf="selectedSegment === 'demandes'">
-    <!-- Pet-Owner Requests -->
     <div class="forum-section">
       <div class="section-header">
         <h3>Demandes de garde</h3>
       </div>
 
-      <ng-container *ngFor="let req of petOwnerRequests">
+      <ng-container *ngFor="let req of openRequests">
         <div class="request-card">
-          <!-- owner icon -->
-          <ion-icon
-            class="owner-icon"
-            name="person-circle-outline"
-            (click)="viewOwner(req)">
+          <!-- 0. Owner icon & name -->
+          <ion-icon class="owner-icon"
+                    name="person-circle-outline"
+                    (click)="viewOwner(req)">
           </ion-icon>
-
-          <!-- owner name -->
           <div class="owner-name" (click)="viewOwner(req)">
             {{ req.ownerName }}
           </div>
 
-          <!-- action icons -->
+          <!-- 1. Action icons -->
           <div class="action-icons">
-            <ion-icon
-              class="pet-icon"
-              name="paw-outline"
-              [ngClass]="{ active: req.petted }"
-              (click)="viewPet(req.petId); req.petted = !req.petted">
+            <ion-icon class="pet-icon"
+                      name="paw-outline"
+                      [ngClass]="{ active: req.petted }"
+                      (click)="viewPet(req.petId); req.petted = !req.petted">
             </ion-icon>
-            <ion-icon
-              class="like-icon"
-              [name]="req.liked ? 'heart' : 'heart-outline'"
-              [color]="getStatusColor(req.liked)"
-              (click)="togglePostulation(req)">
+            <ion-icon class="like-icon"
+                      [name]="req.statut === 'en_attente' ? 'heart' : 'heart-outline'"
+                      [color]="statusColor(req.statut)"
+                      (click)="togglePostulation(req)">
             </ion-icon>
           </div>
 
-          <!-- details -->
+          <!-- 2. Animal & espèce -->
           <div class="owner-detail">
-            <strong>Animal :</strong> {{ req.animalName }} ({{ req.species }})
+            <strong>Animal :</strong>
+            {{ req.animalName }} ({{ req.species }})
           </div>
+
+          <!-- 3. Type de garde -->
+          <div class="owner-detail">
+            <strong>Type de garde :</strong>
+            {{ req.careType === 'chez_proprietaire' ? 'Chez propriétaire' : 'En chenil' }}
+          </div>
+
+          <!-- 4. Si “chez propriétaire”, passages & créneaux -->
+          <ng-container *ngIf="req.careType === 'chez_proprietaire'">
+            <div class="owner-detail">
+              <strong>Passages / jour :</strong> {{ req.passagesPerDay }}
+            </div>
+            <ng-container *ngFor="let s of req.slots">
+              <div class="owner-detail">
+                <strong>Créneau {{ s.slotOrder }} :</strong>
+                {{ s.startTime }} – {{ s.endTime }}
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <!-- 5. Période -->
+          <div class="owner-detail">
+            <strong>Période :</strong>
+            {{ req.startDate | date:'dd/MM/yyyy' }} – {{ req.endDate | date:'dd/MM/yyyy' }}
+          </div>
+
+          <!-- 6. Prix -->
+          <div class="owner-detail">
+            <strong>Prix :</strong>
+            {{ req.minPrice | currency:'EUR':'symbol' }}
+            – {{ req.maxPrice | currency:'EUR':'symbol' }}
+          </div>
+
+          <!-- 7. Adresse -->
           <div class="owner-detail">
             <strong>Adresse :</strong> {{ req.address }}
           </div>
-          <div class="owner-detail">
-            <strong>Type de garde :</strong> {{ req.careType }}
-          </div>
-          
-          <div class="owner-detail">
-            <strong>Prix :</strong>
-            {{ req.minPrice | currency:'EUR':'symbol' }} - {{ req.maxPrice | currency:'EUR':'symbol' }}
-          </div>
-          <div class="owner-detail">
-            <strong>Période :</strong>
-            {{ req.startDate | date:'dd/MM/yyyy' }} –
-            {{ req.endDate   | date:'dd/MM/yyyy' }}
-          </div>
-          
         </div>
       </ng-container>
+
+      <ion-item *ngIf="!loading && openRequests.length === 0">
+        <div class="no-bookings">Aucune demande disponible.</div>
+      </ion-item>
     </div>
 
-    <!-- Pending Postulations -->
+    <!-- ======================= MES POSTULATIONS ======================= -->
     <div class="recent-bookings">
       <div class="section-header">
-        <h3>Postulations en attente</h3>
-        <ion-button fill="clear" size="small" (click)="navigateTo('/postulations')">
-          Voir tout
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-        </ion-button>
+        <h3>Mes postulations</h3>
       </div>
       <ion-list lines="none">
-        <ion-item *ngIf="pendingPostulations.length === 0">
-          <div class="no-bookings">Aucune postulation en attente</div>
-        </ion-item>
-
-        <ion-item
-          *ngFor="let req of pendingPostulations"
-          class="booking-item"
-          lines="none">
+        <ion-item *ngFor="let req of postulatedRequests"
+                  class="booking-item"
+                  lines="none">
           <ion-thumbnail slot="start">
-            <img src="assets/CriticalCondition.png" alt="Photo de l'animal" />
+            <img [src]="getPetPhotoUrl(req.photoProfil)" />
           </ion-thumbnail>
           <ion-label>
             <h4>{{ req.ownerName }}</h4>
             <p>{{ req.animalName }}</p>
             <p class="booking-date">
-              {{ req.startDate | date:'dd/MM/yyyy' }} –
-              {{ req.endDate   | date:'dd/MM/yyyy' }}
+              {{ req.startDate | date:'dd/MM/yyyy' }}
+              – {{ req.endDate | date:'dd/MM/yyyy' }}
             </p>
           </ion-label>
-          <ion-badge color="warning" slot="end">
-            En attente
+          <!-- statut badge -->
+          <ion-badge slot="end"
+                     [color]="statusColor(req.statut)"
+                     (click)="togglePostulation(req)">
+            {{ statusLabel(req.statut) }}
           </ion-badge>
+          <!-- ▶️ chevron for “Voir plus” -->
+          <ion-icon slot="end"
+                    name="chevron-forward-outline"
+                    class="details-icon"
+                    (click)="viewRequestDetails(req)">
+          </ion-icon>
+        </ion-item>
+
+        <ion-item *ngIf="!loading && postulatedRequests.length === 0">
+          <div class="no-bookings">Vous n’avez aucune postulation.</div>
         </ion-item>
       </ion-list>
     </div>
   </div>
 
-  <!-- ARTICLES DE PRESSE -->
+  <!-- ======================= ARTICLES ======================= -->
   <div *ngIf="selectedSegment === 'articles'">
     <div class="article-section">
       <ion-card>
@@ -132,45 +159,26 @@
           Assurez-vous que votre compagnon a toujours accès à de l'eau fraîche, surtout en été.
         </ion-card-content>
       </ion-card>
-
-      <ion-card>
-        <ion-card-header>
-          <ion-icon name="sunny-outline" class="article-icon"></ion-icon>
-          <ion-card-title>Évitez les promenades en pleine chaleur</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Promenez votre animal tôt le matin ou en fin de journée pour éviter les coups de chaleur.
-        </ion-card-content>
-      </ion-card>
-
-      <ion-card>
-        <ion-card-header>
-          <ion-icon name="paw-outline" class="article-icon"></ion-icon>
-          <ion-card-title>Vérifiez régulièrement ses coussinets</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Les coussinets peuvent se fissurer ou se brûler sur les surfaces chaudes ou glacées.
-        </ion-card-content>
-      </ion-card>
+      <!-- … autres articles … -->
     </div>
   </div>
 
+  <!-- Footer Tabs -->
   <ion-footer class="custom-footer">
     <ion-toolbar>
       <ion-tabs>
         <ion-tab-bar slot="bottom">
-          <ion-tab-button tab="home">
-            <ion-icon name="home-outline" (click)="navigateTo('/dashboard-sitter')"></ion-icon>
+          <ion-tab-button tab="home" (click)="navigateTo('/dashboard-sitter')">
+            <ion-icon name="home-outline"></ion-icon>
           </ion-tab-button>
-          
-          <ion-tab-button tab="chat">
-            <ion-icon name="chatbubble-outline" (click)="navigateTo('/pets')"></ion-icon>
+          <ion-tab-button tab="chat" (click)="navigateTo('/chat-list')">
+            <ion-icon name="chatbubble-outline"></ion-icon>
           </ion-tab-button>
-          <ion-tab-button tab="agenda">
-            <ion-icon name="calendar-outline" (click)="navigateTo('/find-sitter')"></ion-icon>
+          <ion-tab-button tab="agenda" (click)="navigateTo('/find-sitter')">
+            <ion-icon name="calendar-outline"></ion-icon>
           </ion-tab-button>
-          <ion-tab-button tab="profile">
-            <ion-icon name="person-outline" (click)="navigateTo('/profile')"></ion-icon>
+          <ion-tab-button tab="profile" (click)="navigateTo('/profile')">
+            <ion-icon name="person-outline"></ion-icon>
           </ion-tab-button>
         </ion-tab-bar>
       </ion-tabs>

@@ -19,6 +19,7 @@ import { PetownerProfilComponent } from './petowner-profil/petowner-profil.compo
 import { gardienProfilComponent } from './gardien-profil/gardien-profil.component';
 import { ChatListComponent } from './chat-list/chat-list.component';
 import { ChatComponent } from './chat/chat.component';
+import { NotificationComponent } from './notification/notification.component';
 
 
 export const routes: Routes = [
@@ -43,12 +44,14 @@ export const routes: Routes = [
   { path: 'petowner-profile' , component: PetownerProfilComponent},
   { path: 'form-searchsitter',           component: FormSearchSitterComponent },
   { path: 'form-searchsitter/:id',       component: FormSearchSitterComponent },
+  { path: 'notifications', component: NotificationComponent },
+
   // Redirection vers la page d'accueil si le chemin est vide
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
 
   // Redirection vers la page d'accueil si le chemin n'est pas trouvé
   //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
-
+  
   {
     path: 'splash',
     loadComponent: () => import('./splash/splash.component').then(m => m.SplashComponent)

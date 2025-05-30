@@ -1,0 +1,27 @@
+<ion-header class="custom-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notifications</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notification-content" fullscreen>
+  <ion-list>
+    <ion-item *ngFor="let notification of notifications">
+      <ion-label (click)="goToSitterProfile(notification.sitterId)">
+        <h3>{{ notification.sitterName }}</h3>
+        <p>{{ notification.message }}</p>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button color="success" fill="clear" (click)="acceptNotification(notification.id)">
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="danger" fill="clear" (click)="declineNotification(notification.id)">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>
