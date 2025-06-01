@@ -15,21 +15,35 @@
     <ion-item
       *ngFor="let th of threads"
       button
-      [routerLink]="['/chat']"
+      [routerLink]="['/chat', th.id]"
       lines="full"
     >
       <ion-avatar slot="start">
-        <img [src]="th.avatarUrl" alt="{{ th.name }}" />
+        <!-- otherParticipant is non-optional, so no need for ?. -->
+        <img
+          [src]="
+            th.otherParticipant.profilePictureURL ||
+            '/assets/default-avatar.png'
+          "
+          alt="{{ th.otherParticipant.first_name }}"
+        />
       </ion-avatar>
 
       <ion-label>
-        <h3>{{ th.name }}</h3>
-        <p>{{ th.lastMessage }}</p>
+        <h3>
+          {{ th.otherParticipant.first_name }}
+          {{ th.otherParticipant.last_name }}
+        </h3>
+        <!-- messages[0] is assumed to always exist -->
+        <p>{{ th.messages[0].body }}</p>
       </ion-label>
 
-      <ion-note slot="end" class="timestamp">{{ th.timestamp }}</ion-note>
+      <ion-note slot="end" class="timestamp">
+        {{ th.messages[0].created_at | date:'HH:mm' }}
+      </ion-note>
+
       <ion-badge
-        *ngIf="th.unreadCount"
+        *ngIf="th.unreadCount > 0"
         slot="end"
         class="unread-badge"
       >

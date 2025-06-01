@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Profil du Gardien</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" *ngIf="!loading">
+  <div class="profile-container">
+    <ion-avatar class="profile-photo">
+      <img [src]="getProfilePhoto()" [alt]="sitter?.first_name" />
+    </ion-avatar>
+
+    <h2>{{ sitter?.first_name }} {{ sitter?.last_name }}</h2>
+
+    <p><strong>Email:</strong> {{ sitter?.email }}</p>
+    <p><strong>Téléphone:</strong> {{ sitter?.phone }}</p>
+    <p><strong>Genre:</strong> {{ sitter?.gender || 'Non spécifié' }}</p>
+    <p><strong>Expérience:</strong> {{ sitter?.experience || 'Non spécifié' }}</p>
+    <p><strong>Qualités personnelles:</strong> {{ sitter?.personalQualities || 'Non spécifié' }}</p>
+    <p><strong>Compétences:</strong> {{ sitter?.skills || 'Non spécifié' }}</p>
+
+    <h3>Adresse personnelle</h3>
+    <p *ngIf="sitter?.personal_address">
+      {{ sitter.personal_address.street }}, {{ sitter.personal_address.city }}, {{ sitter.personal_address.zipcode }}
+    </p>
+
+    <h3>Adresse du chenil</h3>
+    <p *ngIf="sitter?.kennel_address">
+      {{ sitter.kennel_address.street }}, {{ sitter.kennel_address.city }}, {{ sitter.kennel_address.zipcode }}
+    </p>
+  </div>
+</ion-content>
+
+<ion-content *ngIf="loading" class="ion-padding">
+  <ion-spinner></ion-spinner> Chargement du profil...
+</ion-content>

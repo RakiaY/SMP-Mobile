@@ -20,6 +20,11 @@ import { gardienProfilComponent } from './gardien-profil/gardien-profil.componen
 import { ChatListComponent } from './chat-list/chat-list.component';
 import { ChatComponent } from './chat/chat.component';
 import { NotificationComponent } from './notification/notification.component';
+import { SitterNotificationsComponent } from './sitter-notifications/sitter-notifications.component';
+import { SitterProfileModalComponent } from './sitter-profile-modal/sitter-profile-modal.component';
+
+import { ChatBotPage } from './chatbot/chatbot.page';
+
 
 
 export const routes: Routes = [
@@ -35,6 +40,7 @@ export const routes: Routes = [
   { path: 'pets/add', component: PetProfilePage },
   { path: 'pets',        component: PetsPage },
   { path: 'pets/edit/:id', component: PetProfilePage },
+  //{ path: 'sitters/:id', component: SitterProfileModalComponent },
   { path: 'dashboard-sitter', component:   DashboardSitterComponent},
   { path: 'petowner-profil', component: PetownerProfilComponent },
   { path: 'gardien-profil' , component: gardienProfilComponent},
@@ -45,6 +51,11 @@ export const routes: Routes = [
   { path: 'form-searchsitter',           component: FormSearchSitterComponent },
   { path: 'form-searchsitter/:id',       component: FormSearchSitterComponent },
   { path: 'notifications', component: NotificationComponent },
+  { path: 'notifications-sitter', component: SitterNotificationsComponent },
+
+  { path: 'chat-list', loadComponent: () => import('./chat-list/chat-list.component').then(m => m.ChatListComponent) },
+  { path: 'chat/:threadId', loadComponent: () => import('./chat/chat.component').then(m => m.ChatComponent) },
+
 
   // Redirection vers la page d'accueil si le chemin est vide
   { path: '', redirectTo: 'splash', pathMatch: 'full'},
@@ -114,6 +125,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
   canActivate: [AuthGuard]  // <-- protected route
   },
+  {
+    path: 'chatbot',
+    loadComponent: () => import('./chatbot/chatbot.page').then( m => m.ChatBotPage)
+  },
+
 
 
 ];

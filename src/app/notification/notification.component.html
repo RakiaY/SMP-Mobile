@@ -10,7 +10,10 @@
 <ion-content class="notification-content" fullscreen>
   <ion-list>
     <ion-item *ngFor="let notification of notifications">
-      <ion-label (click)="goToSitterProfile(notification.sitterId)">
+      <ion-avatar slot="start" (click)="goToSitterProfile(notification.sitterId)">
+        <img [src]="notification.sitterPhoto" [alt]="notification.sitterName" />
+      </ion-avatar>
+      <ion-label (click)="openSitterProfile(notification.sitterId)">
         <h3>{{ notification.sitterName }}</h3>
         <p>{{ notification.message }}</p>
       </ion-label>

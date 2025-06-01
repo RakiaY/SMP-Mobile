@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-title class="header-title">
+      <ion-icon name="paw" class="header-icon"></ion-icon>
+      Pet Care Assistant
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="chat-content">
+  <div #chatMessages class="chat-messages">
+    <div *ngFor="let msg of messages" [ngClass]="msg.sender">
+      <div class="message-bubble">
+        <div class="avatar" [innerHTML]="getAvatarIcon(msg.sender)"></div>
+        <div class="message-text">
+          <strong>{{ msg.sender === 'bot' ? 'PetBot' : 'You' }}</strong>
+          <p>{{ msg.text }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="chat-footer">
+  <div class="chat-input-container">
+    <ion-item class="chat-input">
+      <ion-input [(ngModel)]="userInput" placeholder="Ask a pet care or sitting question..." [disabled]="loading"></ion-input>
+      <ion-button fill="solid" (click)="sendMessage()" [disabled]="loading || !userInput.trim()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </div>
+</ion-footer>

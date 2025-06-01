@@ -1,15 +1,13 @@
-// src/app/dashboard/dashboard.component.ts
-
-import { Component, OnInit }      from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonicModule, ToastController } from '@ionic/angular';
-import { CommonModule }            from '@angular/common';
-import { RouterModule, Router, NavigationEnd }    from '@angular/router';
-import { HttpClientModule }        from '@angular/common/http';
-import { FormsModule }             from '@angular/forms';
-import { Storage }                 from '@ionic/storage-angular';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { Storage } from '@ionic/storage-angular';
 
-import { SearchSitterService }     from '../services/search-sitter.service';
-import { Search }                  from '../models/search.model';
+import { SearchSitterService } from '../services/search-sitter.service';
+import { Search } from '../models/search.model';
 import { filter } from 'rxjs';
 
 @Component({
@@ -31,12 +29,13 @@ export class DashboardComponent implements OnInit {
   mySearches: Search[] = [];
   loading = true;
   private ownerId!: number;
-  
+
   constructor(
-    private router:    Router,
-    private storage:   Storage,
+    private router: Router,
+    private storage: Storage,
     private searchSvc: SearchSitterService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private http: HttpClient // Added for API calls
   ) {}
 
   async ngOnInit() {
@@ -49,6 +48,7 @@ export class DashboardComponent implements OnInit {
       .subscribe(() => {
         this.loadSearches();
       });
+
     // Initialize the Ionic Storage instance
     await this.storage.create();
 
@@ -62,6 +62,9 @@ export class DashboardComponent implements OnInit {
     }
 
     this.ownerId = current.id;
+
+    this.checkOwnerNotifications(); // 🆕 Check for notifications on load
+
     this.loadSearches();
   }
 
@@ -74,7 +77,7 @@ export class DashboardComponent implements OnInit {
         this.mySearches = all.filter(s => s.ownerId === this.ownerId);
         this.loading = false;
         if (this.mySearches.length === 0) {
-          //this.presentToast("Vous n'avez aucune recherche pour le moment.", 'medium');
+          // this.presentToast("Vous n'avez aucune recherche pour le moment.", 'medium');
         }
       },
       error: () => {
@@ -126,4 +129,24 @@ export class DashboardComponent implements OnInit {
     }
     return `http://localhost:8000/storage/${photoProfil}`;
   }
+
+  // 🆕 Check notifications for owner (when sitter applies)
+  checkOwnerNotifications() {
+    this.http.get<any[]>('http://localhost:8000/api/notifications').subscribe({
+      next: async data => {
+        if (data.length > 0) {
+          const toast = await this.toastCtrl.create({
+            message: `${data.length} nouvelle(s) notification(s) de pet sitters`,
+            duration: 3000,
+            color: 'primary',
+            buttons: [{ text: 'OK', role: 'cancel' }]
+          });
+          toast.present();
+        }
+      },
+      error: err => console.error('Error loading owner notifications', err)
+    });
+  }
+
+  
 }

@@ -1,67 +1,115 @@
+// Apply your custom background and font
 .pets-content {
-   --background: #fdfaf5;
+  --background: #fdfaf5;
   font-family: 'Quicksand', sans-serif;
-  
-  height: 100%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  color: #1dd1a1;
-  
-
- 
-  }
-  .pet-avatar {
-  width: 48px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 50%;
 }
 
-  .no-animals {
-    text-align: center;
-    margin-top: 25%;
-    color: #aaa;
-  }
-  .ng-template p{
-    color: rgb(42, 42, 42);
-  }
-  ion-list ion-item {
-    --background: #fff;
+// Header styling
+.pets-header {
+  --background: #1dd1a1;
+  --color: #fff;
+}
+
+// Wrapper to add padding
+.pets-wrapper {
+  padding: 16px;
+}
+
+// Style each item in the list
+ion-list {
+  margin-top: 16px;
+
+  ion-item {
+    --background: #ffffff;
     border-radius: 12px;
     margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    align-items: center;
+
+    .pet-info {
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #333;
+      }
+      p {
+        margin: 4px 0 0;
+        font-size: 14px;
+        color: #666;
+      }
+    }
   }
-  
-  ion-button {
-    --background: #1dd1a1;
-    --color: #fff;
-    border-radius: 24px;
-    margin-top: 20%;
-    padding-left: 10%;
-    padding-right: 10%;
+}
+
+// Avatar styling
+.pet-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+}
+
+// Action buttons (edit / delete)
 .action-buttons {
-    display: flex;
-    gap: 8px;
-  }
-  
-  .action-buttons ion-button {
+  display: flex;
+  gap: 8px;
+
+  ion-button {
+    --background: transparent;
     --padding-start: 0;
     --padding-end: 0;
-    --background: transparent;
     width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color:#1dd1a1;
+    color: #1dd1a1;
+
+    ion-icon {
+      font-size: 20px;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 50%;
+    }
   }
-  
-  .action-buttons ion-icon {
-    font-size: 20px;
+}
+
+// “No animals” state
+.no-animals {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20%;
+  color: #aaa;
+
+  .no-animals-img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 16px;
+    opacity: 0.6;
   }
-  
-  .action-buttons ion-button:hover {
-    background: rgba(0,0,0,0.05);
-    border-radius: 50%;
+
+  p {
+    font-size: 16px;
+    color: #666;
   }
-  
+}
+
+// “Ajouter un animal” button
+.add-btn {
+  --background: #1dd1a1;
+  --color: #ffffff;
+  border-radius: 24px;
+  margin-top: 16px;
+  padding: 0 24px;
+  font-weight: 600;
+}

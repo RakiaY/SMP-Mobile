@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { ModalController } from '@ionic/angular';
+import { SitterProfileModalComponent } from '../sitter-profile-modal/sitter-profile-modal.component';
+
 
 @Component({
   selector: 'app-notification',
@@ -10,37 +14,57 @@ import { CommonModule } from '@angular/common';
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss']
 })
-export class NotificationComponent {
-  notifications = [
-    {
-      id: 1,
-      sitterId: 101,
-      sitterName: 'John Doe',
-      message: 'veut postuler pour cette garde.'
-    },
-    {
-      id: 2,
-      sitterId: 102,
-      sitterName: 'Emma Smith',
-      message: 'veut postuler pour cette garde.'
-    }
-  ];
+export class NotificationComponent implements OnInit {
+  notifications: any[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private modalCtrl: ModalController) {}
+
+  ngOnInit() {
+    this.loadNotifications();
+  }
+
+  loadNotifications() {
+    this.http.get<any[]>('http://localhost:8000/api/notifications').subscribe({
+      next: data => {
+        this.notifications = data;
+      },
+      error: err => {
+        console.error('Error loading notifications', err);
+      }
+    });
+  }
 
   goToSitterProfile(sitterId: number) {
     this.router.navigate(['/sitter-profile', sitterId]);
   }
 
   acceptNotification(notificationId: number) {
-    console.log(`Accepted notification ${notificationId}`);
-    // TODO: Send accept request to backend, then remove from list
-    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.http.post(`http://localhost:8000/api/postulation/${notificationId}/accept`, {}).subscribe({
+      next: () => {
+        this.notifications = this.notifications.filter(n => n.id !== notificationId);
+      },
+      error: err => {
+        console.error('Error accepting', err);
+      }
+    });
   }
 
   declineNotification(notificationId: number) {
-    console.log(`Declined notification ${notificationId}`);
-    // TODO: Send decline request to backend, then remove from list
-    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.http.post(`http://localhost:8000/api/postulation/${notificationId}/decline`, {}).subscribe({
+      next: () => {
+        this.notifications = this.notifications.filter(n => n.id !== notificationId);
+      },
+      error: err => {
+        console.error('Error declining', err);
+      }
+    });
+  }
+  // Open modal
+  async openSitterProfile(sitterId: number) {
+    const modal = await this.modalCtrl.create({
+      component: SitterProfileModalComponent,
+      componentProps: { sitterId }
+    });
+    await modal.present();
   }
 }

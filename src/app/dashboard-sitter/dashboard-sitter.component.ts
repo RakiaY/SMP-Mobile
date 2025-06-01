@@ -1,11 +1,9 @@
-// src/app/dashboard-sitter/dashboard-sitter.component.ts
-
 import { Component, OnInit } from '@angular/core';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';  // Add ToastController
 import { CommonModule }      from '@angular/common';
 import { FormsModule }       from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { HttpClientModule }  from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';  // Add HttpClient
 import { forkJoin }          from 'rxjs';
 import { Storage }           from '@ionic/storage-angular';
 import { SearchDetailsModalComponent } from '../search-details-modal/search-details-modal.component';
@@ -42,13 +40,17 @@ export class DashboardSitterComponent implements OnInit {
     private searchSvc: SearchSitterService,
     private postSvc:   PostulationService,
     private storage:   Storage,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private http:      HttpClient,  // Add HttpClient for API calls
+    private toastCtrl: ToastController  // Add ToastController for notifications
   ) {}
 
   async ngOnInit() {
     await this.storage.create();
     const current = await this.storage.get('current_user');
     this.sitterId = current?.id ?? 0;
+
+    this.checkSitterNotifications();  // 🆕 Check for notifications when sitter opens dashboard
 
     forkJoin({
       searches: this.searchSvc.getRequests(),
@@ -78,6 +80,24 @@ export class DashboardSitterComponent implements OnInit {
         this.loading = false;
       },
       error: () => this.loading = false
+    });
+  }
+
+  // 🆕 Add method to check sitter notifications
+  checkSitterNotifications() {
+    this.http.get<any[]>('http://localhost:8000/api/sitter-notifications').subscribe({
+      next: async data => {
+        if (data.length > 0) {
+          const toast = await this.toastCtrl.create({
+            message: `${data.length} nouvelle(s) notification(s)`,
+            duration: 3000,
+            color: 'primary',
+            buttons: [{ text: 'OK', role: 'cancel' }]
+          });
+          toast.present();
+        }
+      },
+      error: err => console.error('Error loading sitter notifications', err)
     });
   }
 
@@ -164,5 +184,13 @@ export class DashboardSitterComponent implements OnInit {
       }
     });
     await modal.present();
+  }
+  
+  goToChatBot() {
+    this.router.navigate(['/chatbot']);
+  }
+  showChatBotButton = true
+  closeChatBot() {
+    this.showChatBotButton = false;
   }
 }

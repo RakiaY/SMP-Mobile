@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar class="pets-content">
+  <ion-toolbar class="pets-header">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/dashboard"></ion-back-button>
     </ion-buttons>
@@ -12,18 +12,17 @@
     <!-- Liste des animaux -->
     <ng-container *ngIf="Pets.length > 0; else noAnimals">
       <ion-list>
-        <!-- capture `i` for the index -->
         <ion-item *ngFor="let pet of Pets; let i = index">
-          <ion-avatar slot="start">
+          <ion-avatar slot="start" class="pet-avatar">
             <img
               [src]="getPetPhotoUrl(pet.photo_profil)"
               [alt]="pet.name"
-              class="pet-avatar"
             />
           </ion-avatar>
 
-          <ion-label>
+          <ion-label class="pet-info">
             <h3>{{ pet.name }}</h3>
+            <p>{{ pet.breed || '—' }}, {{ pet.gender }}</p>
           </ion-label>
 
           <ion-buttons slot="end" class="action-buttons">
@@ -32,6 +31,7 @@
               fill="clear"
               size="small"
               (click)="editPet(pet.id)"
+              aria-label="Modifier"
             >
               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-button>
@@ -41,6 +41,7 @@
               fill="clear"
               size="small"
               (click)="deletePet(pet.id, i)"
+              aria-label="Supprimer"
             >
               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-button>

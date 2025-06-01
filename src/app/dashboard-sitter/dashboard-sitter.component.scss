@@ -190,3 +190,7 @@ ion-list { background:transparent; padding:0; }
   .owner-detail { font-size:14px; }
   .action-icons ion-icon { font-size:24px; }
 }
+
+ion-fab {
+  z-index: 100;
+}

@@ -5,7 +5,7 @@
     <h2>Bienvenue <ion-icon name="paw-outline"></ion-icon></h2>
     <ion-icon name="notifications-outline"
               class="notif-icon"
-              (click)="navigateTo('notifications')">
+              (click)="navigateTo('notifications-sitter')">
     </ion-icon>
   </div>
   <div class="welcome-banner">
@@ -23,6 +23,11 @@
       <ion-label>Articles de presse</ion-label>
     </ion-segment-button>
   </ion-segment>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="tertiary" size="large" (click)="navigateTo('/chatbot')">
+      <ion-icon name="paw"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
   <!-- ======================= DEMANDES DE GARDE ======================= -->
   <div *ngIf="selectedSegment === 'demandes'">
