@@ -19,6 +19,12 @@
     </ion-segment-button>
   </ion-segment>
 
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="tertiary" size="large" (click)="navigateTo('/chatbot')">
+      <ion-icon name="paw"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
   <!-- Mes recherches -->
   <div *ngIf="selectedSegment==='Annonces'">
     <div class="forum-section">
