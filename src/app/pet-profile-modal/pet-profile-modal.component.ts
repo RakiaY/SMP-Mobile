@@ -73,6 +73,11 @@ export class PetProfileModalComponent implements OnInit {
       error: err => console.error('Erreur fetching pet:', err)
     });
   }
+  
+getPetPhotoUrl(photoProfil: string | null): string {
+
+  return `http://localhost:8000/storage/${photoProfil}`;
+}
 
   close() {
     this.modalCtrl.dismiss();

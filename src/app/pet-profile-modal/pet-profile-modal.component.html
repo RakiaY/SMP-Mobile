@@ -13,7 +13,11 @@
   <!-- Photo & infos principales -->
   <div class="pet-header">
     <ion-avatar>
-      <img [src]="pet.photo_profil || 'assets/placeholder-pet.png'" />
+       <img
+    [src]="getPetPhotoUrl(pet.photo_profil)"
+    [alt]="pet.name"
+    class="pet-avatar"
+  />
     </ion-avatar>
     <h2>{{ pet.name }} ({{ pet.type }})</h2>
     <p>{{ pet.breed }}</p>
