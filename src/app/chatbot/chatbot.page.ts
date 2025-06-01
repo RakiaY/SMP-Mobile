@@ -33,7 +33,7 @@ export class ChatBotPage implements OnInit {
         this.scrollToBottom();
       },
       (err) => {
-        console.error('Error loading messages:', err);
+        console.error('Erreur lors du chargement des messages:', err);
       }
     );
   }
@@ -66,7 +66,7 @@ export class ChatBotPage implements OnInit {
         } else if (typeof res === 'string') {
           aiReply = res;
         } else {
-          aiReply = 'Sorry, I did not understand.';
+          aiReply = "Désolé, je n'ai pas compris."
         }
 
         this.messages.push({ sender: 'bot', text: aiReply });
@@ -76,7 +76,7 @@ export class ChatBotPage implements OnInit {
       },
       (err) => {
         console.error('Error:', err);
-        this.messages.push({ sender: 'bot', text: 'Error communicating with AI.' });
+        this.messages.push({ sender: 'bot', text: "Erreur de communication avec l'IA." });
         this.loading = false;
         this.scrollToBottom();
       }

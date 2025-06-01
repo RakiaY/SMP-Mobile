@@ -1,32 +1,57 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  private apiUrl = 'http://localhost:11434/api/generate';
-  private api = 'http://127.0.0.1:8000';
+  private ollamaUrl = 'http://localhost:11434/api/generate'; // Ollama endpoint
+  private backendUrl = 'http://127.0.0.1:8000'; // Backend Laravel
 
   constructor(private http: HttpClient) {}
 
   sendMessage(message: string) {
-    const body = {
-    model: 'phi',
-    prompt: `You are PetBot, a friendly and helpful pet care assistant. You answer pet care and pet sitting questions clearly, briefly, and **without logic puzzles, proofs, or explanations**. Your answers are practical, concise, and pet-focused. 
+    const prompt = `
+Tu es PetBot, un assistant expert en soins d'animaux. Réponds uniquement en français et uniquement aux questions sur les animaux (chiens, chats, lapins, poissons, oiseaux). Tes réponses doivent être claires, courtes, pratiques et sans politesse inutile.
 
-    User: ${message}
-    PetBot:`,
-      stream: false
+Question : ${message}
+Réponse :
+`.trim();
+
+    const body = {
+      model: 'OpenLLM-France/Lucie-7B-Instruct',
+      prompt,
+      stream: false,
     };
 
-    return this.http.post(this.apiUrl, body);
-  }
-  getPetBotMessages() {
-    return this.http.get(`${this.api}/api/petbot/messages`);
+    console.log('Envoi du message à Ollama :', body);
+
+    return this.http.post(this.ollamaUrl, body).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur lors de l\'appel à Ollama :', error);
+        return throwError(() => new Error('Erreur réseau ou serveur'));
+      })
+    );
   }
 
-  savePetBotMessage(message: { sender: string, content: string }) {
-    return this.http.post(`${this.api}/api/petbot/messages`, message);
+  getPetBotMessages() {
+    console.log('Récupération des messages depuis le backend...');
+    return this.http.get(`${this.backendUrl}/api/petbot/messages`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur lors de la récupération des messages :', error);
+        return throwError(() => new Error('Erreur lors de la récupération des messages'));
+      })
+    );
+  }
+
+  savePetBotMessage(message: { sender: string; content: string }) {
+    console.log('Sauvegarde du message sur le backend :', message);
+    return this.http.post(`${this.backendUrl}/api/petbot/messages`, message).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('Erreur lors de la sauvegarde du message :', error);
+        return throwError(() => new Error('Erreur lors de la sauvegarde du message'));
+      })
+    );
   }
 }
