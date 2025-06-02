@@ -10,27 +10,22 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Photo & infos principales -->
   <div class="pet-header">
     <ion-avatar>
-       <img
-    [src]="getPetPhotoUrl(pet.photo_profil)"
-    [alt]="pet.name"
-    class="pet-avatar"
-  />
+      <img
+        [src]="getPetPhotoUrl(pet.photo_profil)"
+        [alt]="pet.name"
+        class="pet-avatar"
+      />
     </ion-avatar>
     <h2>{{ pet.name }} ({{ pet.type }})</h2>
     <p>{{ pet.breed }}</p>
-<p *ngIf="pet.birth_date">
-  Né(e) le : {{ pet.birth_date | date:'dd/MM/yyyy' }}
-</p>
+    <p *ngIf="pet.birth_date">
+      Né(e) le : {{ pet.birth_date | date:'dd/MM/yyyy' }}
+    </p>
+    <p *ngIf="age !== null">Âge : {{ age }} ans</p>
+  </div>
 
-<!-- Affiche l'âge uniquement si age n'est pas null -->
-<p *ngIf="age !== null">
-  Âge : {{ age }} ans
-</p>  </div>
-
-  <!-- Caractéristiques physiques -->
   <ion-list>
     <ion-item>
       <ion-label>Genre</ion-label>
@@ -44,15 +39,11 @@
       <ion-label>Taille</ion-label>
       <ion-note slot="end">{{ pet.taille || '—' }}</ion-note>
     </ion-item>
-  </ion-list>
-
-  <!-- Informations médicales -->
-  <ion-list>
     <ion-item>
       <ion-label>Vacciné</ion-label>
       <ion-icon slot="end" [name]="pet.is_vaccinated ? 'checkmark-circle' : 'close-circle'" [color]="pet.is_vaccinated ? 'success' : 'danger'"></ion-icon>
     </ion-item>
-    <ion-item *ngIf="pet.has_contagious_disease">
+    <ion-item *ngIf="pet.has_contagious_diseases">
       <ion-label>Maladie contagieuse</ion-label>
       <ion-icon slot="end" name="alert-circle" color="danger"></ion-icon>
     </ion-item>
@@ -66,9 +57,20 @@
     </ion-item>
   </ion-list>
 
-  <!-- Description / Comportement -->
   <div *ngIf="pet.description" class="description">
     <h3>Notes du propriétaire</h3>
     <p>{{ pet.description }}</p>
   </div>
+
+  <ion-list *ngIf="pet.medias && pet.medias.length > 0">
+    <ion-item>
+      <ion-label><strong>Médias</strong></ion-label>
+    </ion-item>
+    <ion-item *ngFor="let media of pet.medias">
+      <ion-thumbnail slot="start">
+        <img [src]="getPetPhotoUrl(media.media_url)" />
+      </ion-thumbnail>
+      <ion-label>{{ media.media_type | titlecase }}</ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
