@@ -1,88 +1,210 @@
-import { Component, OnInit } from '@angular/core';
-import { IonicModule, ToastController } from '@ionic/angular';
-import { RouterModule, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../services/auth.service';
+import { Component, OnInit } from "@angular/core"
+import { IonicModule, ToastController, LoadingController, AlertController } from "@ionic/angular"
+import { RouterModule, Router } from "@angular/router"
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms"
+import { CommonModule } from "@angular/common"
+import { AuthService } from "../services/auth.service"
+import { ErrorHandlerService } from "../services/error-handler.service"
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
-  imports: [
-    IonicModule,
-    RouterModule,
-    ReactiveFormsModule,
-    CommonModule
-  ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  imports: [IonicModule, RouterModule, ReactiveFormsModule, CommonModule],
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  loading = false;
+  loginForm!: FormGroup
+  loading = false
+  showPassword = false
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private toastController: ToastController,
-    private router: Router
+    private loadingController: LoadingController,
+    private alertController: AlertController,
+    private router: Router,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", Validators.required],
+    })
   }
 
-  /** Affiche un toast Ionic */
-  private async showToast(message: string, color: 'success' | 'danger' = 'success') {
+  async onSubmit() {
+    if (this.loginForm.valid && !this.loading) {
+      await this.performLogin()
+    } else {
+      await this.showValidationErrors()
+    }
+  }
+
+  private async performLogin() {
+    const loading = await this.loadingController.create({
+      message: "Connexion en cours...",
+      spinner: "crescent",
+    })
+    await loading.present()
+
+    this.loading = true
+    const { email, password } = this.loginForm.value
+
+    this.auth.loginUser({ email, password }).subscribe({
+      next: async (response) => {
+        await loading.dismiss()
+        this.loading = false
+
+        await this.showSuccessToast("Connexion réussie !")
+        this.redirectBasedOnRole()
+      },
+      error: async (error) => {
+        await loading.dismiss()
+        this.loading = false
+
+        console.log("Login error:", error)
+
+        if (error.type === "PENDING_APPROVAL") {
+          await this.showPendingApprovalAlert(error.message, email)
+        } else if (error.type === "ACCOUNT_INACTIVE") {
+          await this.showErrorToast(error.message)
+        } else if (error.type === "INVALID_CREDENTIALS") {
+          await this.showErrorToast(error.message)
+        } else {
+          await this.showErrorToast(error.message || "Erreur de connexion")
+        }
+      },
+    })
+  }
+
+  private async showPendingApprovalAlert(message: string, email: string) {
+    const alert = await this.alertController.create({
+      header: "Compte en attente",
+      message: message,
+      buttons: [
+        {
+          text: "Vérifier le statut",
+          handler: () => {
+            this.checkAccountStatus(email)
+          },
+        },
+        {
+          text: "OK",
+          role: "cancel",
+        },
+      ],
+    })
+    await alert.present()
+  }
+
+  private async checkAccountStatus(email: string) {
+    const loading = await this.loadingController.create({
+      message: "Vérification du statut...",
+      spinner: "crescent",
+    })
+    await loading.present()
+
+    this.auth.checkAccountStatus(email).subscribe({
+      next: async (response) => {
+        await loading.dismiss()
+
+        if (response.status === "Active") {
+          await this.showSuccessToast("Votre compte a été approuvé ! Vous pouvez maintenant vous connecter.")
+        } else if (response.status === "Pending") {
+          await this.showInfoToast("Votre compte est toujours en attente d'approbation.")
+        } else {
+          await this.showErrorToast("Votre compte a été rejeté. Contactez l'administration.")
+        }
+      },
+      error: async (error) => {
+        await loading.dismiss()
+        await this.showErrorToast("Impossible de vérifier le statut du compte.")
+      },
+    })
+  }
+
+  private async redirectBasedOnRole() {
+    const user = await this.auth.getCurrentUser()
+
+    if (!user) {
+      this.router.navigate(["/login"])
+      return
+    }
+
+    const roles = user.roles || []
+
+    if (roles.includes("petowner") || roles.includes("pet_owner") || roles.includes("owner")) {
+      this.router.navigate(["/dashboard"])
+    } else if (roles.includes("petsitter") || roles.includes("pet_sitter") || roles.includes("sitter")) {
+      this.router.navigate(["/dashboard-sitter"])
+    } else if (roles.includes("admin") || roles.includes("super_admin")) {
+      this.router.navigate(["/admin-dashboard"])
+    } else {
+      this.router.navigate(["/home"])
+    }
+  }
+
+  private async showValidationErrors() {
+    const errors = []
+
+    if (this.loginForm.get("email")?.hasError("required")) {
+      errors.push("L'email est requis")
+    } else if (this.loginForm.get("email")?.hasError("email")) {
+      errors.push("Format d'email invalide")
+    }
+
+    if (this.loginForm.get("password")?.hasError("required")) {
+      errors.push("Le mot de passe est requis")
+    }
+
+    await this.showErrorToast(errors.join(", "))
+  }
+
+  private async showSuccessToast(message: string) {
     const toast = await this.toastController.create({
       message,
       duration: 3000,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
+      position: "top",
+      color: "success",
+      icon: "checkmark-circle",
+    })
+    await toast.present()
   }
 
-  /** Soumission du formulaire */
-  submitForm() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
+  private async showErrorToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 4000,
+      position: "top",
+      color: "danger",
+      icon: "alert-circle",
+    })
+    await toast.present()
+  }
 
-    this.loading = true;
+  private async showInfoToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 4000,
+      position: "top",
+      color: "primary",
+      icon: "information-circle",
+    })
+    await toast.present()
+  }
 
-    this.auth.loginUser(this.loginForm.value).subscribe({
-      next: async () => {
-        /** On attend que le token & l’utilisateur soient bien stockés */
-        const user = await this.auth.getCurrentUser();
-        const token = await this.auth.getToken();
-        this.loading = false;
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword
+  }
 
-        if (!token || !user) {
-          await this.showToast('Refused Access.', 'danger');
-          return;
-        }
+  goToSignup() {
+    this.router.navigate(["/signup"])
+  }
 
-        const roles = user.roles || [];
-
-        if (roles.includes('petowner')) {
-          await this.showToast('Connexion réussie !', 'success');
-          this.router.navigate(['/dashboard']);
-        } else if (roles.includes('petsitter')) {
-          await this.showToast('Connexion réussie !', 'success');
-          this.router.navigate(['/dashboard-sitter']);
-        } else {
-          await this.showToast('Refused Access.', 'danger');
-        }
-      },
-      error: async () => {
-        this.loading = false;
-        await this.showToast('Login ou mot de passe incorrect', 'danger');
-      }
-    });
+  goToForgotPassword() {
+    this.router.navigate(["/forgot-password"])
   }
 }
