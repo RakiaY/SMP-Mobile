@@ -49,7 +49,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     // 1) get threadId from URL
-    this.threadId = +this.route.snapshot.paramMap.get('threadId')!;
+    this.threadId = +this.route.snapshot.paramMap.get('id')!;
+    console.log('ChatComponent initialized for thread:', this.threadId);
 
     // 2) load logged-in user id
     const user = await this.authSvc.getCurrentUser();

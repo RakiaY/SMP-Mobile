@@ -5,13 +5,14 @@
     </ion-buttons>
     <ion-title>Conversations</ion-title>
     <ion-buttons slot="end">
+      <!-- Ensure 'notifications-outline' icon is available or use a different one -->
       <ion-icon name="notifications-outline" class="notif-icon"></ion-icon>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="dashboard-content">
-  <ion-list>
+  <ion-list *ngIf="!loading && threads && threads.length > 0">
     <ion-item
       *ngFor="let th of threads"
       button
@@ -19,27 +20,23 @@
       lines="full"
     >
       <ion-avatar slot="start">
-        <!-- otherParticipant is non-optional, so no need for ?. -->
         <img
-          [src]="
-            th.otherParticipant.profilePictureURL ||
-            '/assets/default-avatar.png'
-          "
-          alt="{{ th.otherParticipant.first_name }}"
+          [src]="th.otherParticipant?.profilePictureURL || '/assets/default-avatar.png'"
+          [alt]="th.otherParticipant?.first_name"
         />
       </ion-avatar>
 
       <ion-label>
         <h3>
-          {{ th.otherParticipant.first_name }}
-          {{ th.otherParticipant.last_name }}
+          {{ th.otherParticipant?.first_name }}
+          {{ th.otherParticipant?.last_name }}
         </h3>
-        <!-- messages[0] is assumed to always exist -->
-        <p>{{ th.messages[0].body }}</p>
+        <p *ngIf="th.messages && th.messages.length > 0">{{ th.messages[0]?.body }}</p>
+        <p *ngIf="!th.messages || th.messages.length === 0">No messages yet</p>
       </ion-label>
 
-      <ion-note slot="end" class="timestamp">
-        {{ th.messages[0].created_at | date:'HH:mm' }}
+      <ion-note slot="end" class="timestamp" *ngIf="th.messages && th.messages.length > 0">
+        {{ th.messages[0]?.created_at | date:'HH:mm' }}
       </ion-note>
 
       <ion-badge
@@ -51,4 +48,10 @@
       </ion-badge>
     </ion-item>
   </ion-list>
+  <div *ngIf="loading" style="text-align: center; padding: 20px;">
+    Loading conversations...
+  </div>
+  <div *ngIf="!loading && (!threads || threads.length === 0)" style="text-align: center; padding: 20px;">
+    No conversations found.
+  </div>
 </ion-content>

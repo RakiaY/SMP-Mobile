@@ -121,19 +121,54 @@
 
   <!-- Articles de presse -->
   <div *ngIf="selectedSegment==='articles'">
-    <div class="article-section">
-      <ion-card>
-        <ion-card-header>
-          <ion-icon name="water-outline" class="article-icon"></ion-icon>
-          <ion-card-title>Hydratez votre animal</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          Assurez-vous que votre compagnon a toujours accès à de l'eau fraîche, surtout en été.
-        </ion-card-content>
-      </ion-card>
-      <!-- …etc. as before… -->
-    </div>
+  <div class="article-section">
+
+    <!-- Article 1 : Hydratation -->
+    <ion-card>
+      <ion-card-header>
+        <ion-icon name="water-outline" class="article-icon"></ion-icon>
+        <ion-card-title>Hydratez votre animal</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Assurez-vous que votre compagnon a toujours accès à de l'eau fraîche, surtout pendant les fortes chaleurs. Privilégiez une fontaine ou plusieurs bols d’eau.
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Article 2 : Glaçons et friandises d'été -->
+    <ion-card>
+      <ion-card-header>
+        <ion-icon name="ice-cream-outline" class="article-icon"></ion-icon>
+        <ion-card-title>Des friandises glacées maison</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Préparez des glaçons avec un peu de bouillon ou de la purée de fruits adaptée aux animaux. Rafraîchissant et amusant pour votre compagnon à quatre pattes !
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Article 3 : Prévention coup de chaleur -->
+    <ion-card>
+      <ion-card-header>
+        <ion-icon name="sunny-outline" class="article-icon"></ion-icon>
+        <ion-card-title>Attention au coup de chaleur</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Évitez les promenades aux heures les plus chaudes. Privilégiez les sorties tôt le matin ou en fin de journée, et offrez toujours un coin d’ombre à votre animal.
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Article 4 : Surveillez les signes de déshydratation -->
+    <ion-card>
+      <ion-card-header>
+        <ion-icon name="alert-circle-outline" class="article-icon"></ion-icon>
+        <ion-card-title>Reconnaître la déshydratation</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Si votre animal semble fatigué, halète beaucoup, a la bouche sèche ou les gencives collantes, il peut être déshydraté. Consultez un vétérinaire rapidement.
+      </ion-card-content>
+    </ion-card>
+
   </div>
+</div>
 
   <!-- Footer tabs -->
   <ion-footer class="custom-footer">

@@ -42,6 +42,7 @@ export interface ChatThread {
 export class ChatListComponent implements OnInit {
   threads: ChatThread[] = [];
   currentUserId!: number;
+  loading: any;
 
   constructor(
     private authSvc: AuthService,

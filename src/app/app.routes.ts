@@ -1,135 +1,155 @@
-import { Routes } from '@angular/router';
-import { SplashComponent } from './splash/splash.component';
-import { HomeComponent } from './home/home.component';
-import { SignupComponent } from './signup/signup.component';
-import { LoginComponent } from './login/login.component';
-import { GuardianFormComponent } from './guardian-form/guardian-form.component';
-import { OwnerFormComponent } from './owner-form/owner-form.component';
-import { ConfirmationGuardianComponent } from './confirmation-guardian/confirmation-guardian.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { FindSitterComponent } from './find-sitter/find-sitter.component';
-import { PetProfilePage } from './pet-profile/pet-profile.page';
-import { PetsPage }           from './pets/pets.page';
-import { DashboardSitterComponent } from './dashboard-sitter/dashboard-sitter.component';
-import { AuthGuard } from './guards/auth.guard';
-import { LogoutGuard } from './guards/logout.guard';
-import { FormSearchSitterComponent} from './form-searchsitter/form-searchsitter.component';
-
-import { PetownerProfilComponent } from './petowner-profil/petowner-profil.component';
-import { gardienProfilComponent } from './gardien-profil/gardien-profil.component';
-import { ChatListComponent } from './chat-list/chat-list.component';
-import { ChatComponent } from './chat/chat.component';
-import { NotificationComponent } from './notification/notification.component';
-import { SitterNotificationsComponent } from './sitter-notifications/sitter-notifications.component';
-import { SitterProfileModalComponent } from './sitter-profile-modal/sitter-profile-modal.component';
-
-import { ChatBotPage } from './chatbot/chatbot.page';
-
-
+import type { Routes } from "@angular/router"
+import { AuthGuard } from "./guards/auth.guard"
+import { LogoutGuard } from "./guards/logout.guard"
+import { RoleGuard } from "./guards/role.guard"
+import { Injectable } from "@angular/core"
+import { Storage } from "@ionic/storage-angular"
+import { AuthService } from "./services/auth.service"
+import { ToastController } from "@ionic/angular"
+import { Router } from "@angular/router"
 
 export const routes: Routes = [
-  { path: '', component: SplashComponent }, // ✅ doit être tout en haut
-  { path: 'home', component: HomeComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'guardian-form', component: GuardianFormComponent },
-  { path: 'confirmation-guardian', component: ConfirmationGuardianComponent },
-  { path: 'owner-form', component: OwnerFormComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'find-sitter', component: FindSitterComponent },
-  { path: 'pets/add', component: PetProfilePage },
-  { path: 'pets',        component: PetsPage },
-  { path: 'pets/edit/:id', component: PetProfilePage },
-  //{ path: 'sitters/:id', component: SitterProfileModalComponent },
-  { path: 'dashboard-sitter', component:   DashboardSitterComponent},
-  { path: 'petowner-profil', component: PetownerProfilComponent },
-  { path: 'gardien-profil' , component: gardienProfilComponent},
-  { path: 'form-searchsitter' , component: FormSearchSitterComponent},
-  { path: 'chat-list' , component: ChatListComponent},
-  { path: 'chat' , component: ChatComponent},
-  { path: 'petowner-profile' , component: PetownerProfilComponent},
-  { path: 'form-searchsitter',           component: FormSearchSitterComponent },
-  { path: 'form-searchsitter/:id',       component: FormSearchSitterComponent },
-  { path: 'notifications', component: NotificationComponent },
-  { path: 'notifications-sitter', component: SitterNotificationsComponent },
-
-  { path: 'chat-list', loadComponent: () => import('./chat-list/chat-list.component').then(m => m.ChatListComponent) },
-  { path: 'chat/:threadId', loadComponent: () => import('./chat/chat.component').then(m => m.ChatComponent) },
-
-
-  // Redirection vers la page d'accueil si le chemin est vide
-  { path: '', redirectTo: 'splash', pathMatch: 'full'},
-
-  // Redirection vers la page d'accueil si le chemin n'est pas trouvé
-  //{ path: '**', redirectTo: '/home', pathMatch: 'full' },
-  
   {
-    path: 'splash',
-    loadComponent: () => import('./splash/splash.component').then(m => m.SplashComponent)
-  },
-{
-    path: 'home',
-    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
+    path: "",
+    redirectTo: "home",
+    pathMatch: "full",
   },
   {
-    path: 'login',
-    loadComponent: () => import('./login/login.component').then(m => m.LoginComponent),
-    canActivate: [LogoutGuard]
+    path: "home",
+    loadComponent: () => import("./home/home.component").then((m) => m.HomeComponent),
   },
   {
-    path: 'signup',
-    loadComponent: () => import('./signup/signup.component').then(m => m.SignupComponent),
-    canActivate: [LogoutGuard]
+    path: "login",
+    loadComponent: () => import("./login/login.component").then((m) => m.LoginComponent),
+    canActivate: [LogoutGuard],
   },
   {
-    path: 'owner-form',
-    loadComponent: () => import('./owner-form/owner-form.component').then(m => m.OwnerFormComponent),
-    canActivate: [LogoutGuard]
+    path: "signup",
+    loadComponent: () => import("./signup/signup.component").then((m) => m.SignupComponent),
+    canActivate: [LogoutGuard],
   },
   {
-    path: 'sitter-form',
-    loadComponent: () => import('./guardian-form/guardian-form.component').then(m => m.GuardianFormComponent),
-    canActivate: [LogoutGuard]
+    path: "dashboard",
+    loadComponent: () => import("./dashboard/dashboard.component").then((m) => m.DashboardComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petowner", "pet_owner", "owner"] },
   },
   {
-    path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [AuthGuard]
+    path: "dashboard-sitter",
+    loadComponent: () =>
+      import("./dashboard-sitter/dashboard-sitter.component").then((m) => m.DashboardSitterComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petsitter", "pet_sitter", "sitter"] },
   },
   {
-    path: 'dashboard-sitter',
-    loadComponent: () => import('./dashboard-sitter/dashboard-sitter.component').then(m => m.DashboardSitterComponent),
-    canActivate: [AuthGuard]  // <-- protected route
+    path: "find-sitter",
+    loadComponent: () => import("./find-sitter/find-sitter.component").then((m) => m.FindSitterComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petowner", "pet_owner", "owner"] },
   },
   {
-    path: 'find-sitter',
-    loadComponent: () => import('./find-sitter/find-sitter.component').then(m => m.FindSitterComponent),
-    canActivate: [AuthGuard]  // <-- protected route
+    path: "pets",
+    loadComponent: () => import("./pets/pets.page").then((m) => m.PetsPage),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petowner", "pet_owner", "owner"] },
   },
   {
-    path: 'pet-profile',
-    loadComponent: () => import('./pet-profile/pet-profile.page').then( m => m.PetProfilePage),
-    canActivate: [AuthGuard]  // <-- protected route
-  },
-  {
-    path: 'pets',
-    loadComponent: () => import('./pets/pets.page').then( m => m.PetsPage),
-    canActivate: [AuthGuard]  // <-- protected route
+    path: "pet-profile/:id",
+    loadComponent: () => import("./pet-profile/pet-profile.page").then((m) => m.PetProfilePage),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petowner", "pet_owner", "owner"] },
   },
   {
   path: 'pets/add',
-  loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
-  canActivate: [AuthGuard]  // <-- protected route
-},
+    loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
+    canActivate: [AuthGuard]  // <-- protected route
+  },
   { path: 'pets/edit/:id', 
     loadComponent: () => import('./pet-profile/pet-profile.page').then(m => m.PetProfilePage),
-  canActivate: [AuthGuard]  // <-- protected route
+    canActivate: [AuthGuard]  // <-- protected route
+  },
+  // Fixed routes - using only AuthGuard for general access
+  {
+    path: "chat-list",
+    loadComponent: () => import("./chat-list/chat-list.component").then((m) => m.ChatListComponent),
+    canActivate: [AuthGuard],
   },
   {
-    path: 'chatbot',
-    loadComponent: () => import('./chatbot/chatbot.page').then( m => m.ChatBotPage)
+    path: "chat/:id",
+    loadComponent: () => import("./chat/chat.component").then((m) => m.ChatComponent),
+    canActivate: [AuthGuard],
   },
-
-
-
-];
+  {
+    path: "notifications",
+    loadComponent: () => import("./notification/notification.component").then((m) => m.NotificationComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "notifications-sitter",
+    loadComponent: () =>
+      import("./sitter-notifications/sitter-notifications.component").then((m) => m.SitterNotificationsComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petsitter", "pet_sitter", "sitter"] },
+  },
+  {
+    path: "chatbot",
+    loadComponent: () => import("./chatbot/chatbot.page").then((m) => m.ChatBotPage),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "splash",
+    loadComponent: () => import("./splash/splash.component").then((m) => m.SplashComponent),
+  },
+  {
+    path: "guardian-form",
+    loadComponent: () => import("./guardian-form/guardian-form.component").then((m) => m.GuardianFormComponent),
+    canActivate: [LogoutGuard],
+  },
+  {
+    path: "owner-form",
+    loadComponent: () => import("./owner-form/owner-form.component").then((m) => m.OwnerFormComponent),
+    canActivate: [LogoutGuard],
+  },
+  {
+    path: "confirmation-guardian",
+    loadComponent: () =>
+      import("./confirmation-guardian/confirmation-guardian.component").then((m) => m.ConfirmationGuardianComponent),
+  },
+  {
+    path: "gardien-profil/:id",
+    loadComponent: () => import("./gardien-profil/gardien-profil.component").then((m) => m.gardienProfilComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "petowner-profil/:id",
+    loadComponent: () => import("./petowner-profil/petowner-profil.component").then((m) => m.PetownerProfilComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "form-searchsitter",
+    loadComponent: () => import("./form-searchsitter/form-searchsitter.component").then((m) => m.FormSearchSitterComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "form-searchsitter/:id",
+    loadComponent: () => import("./form-searchsitter/form-searchsitter.component").then((m) => m.FormSearchSitterComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "petowner-profile",
+    loadComponent: () => import("./petowner-profil/petowner-profil.component").then((m) => m.PetownerProfilComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petowner", "pet_owner", "owner"] },
+  },
+  {
+    path: "gardien-profile",
+    loadComponent: () => import("./gardien-profil/gardien-profil.component").then((m) => m.gardienProfilComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ["petsitter", "pet_sitter", "sitter"] },
+  },
+  
+  //{
+    //path: "**",
+    //redirectTo: "home",
+  //},
+]
