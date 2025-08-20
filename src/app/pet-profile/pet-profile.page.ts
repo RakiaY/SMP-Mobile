@@ -6,6 +6,7 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage-angular';
 import { PetService } from '../services/pet.service';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-pet-profile',
@@ -15,6 +16,8 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./pet-profile.page.scss']
 })
 export class PetProfilePage implements OnInit {
+    Pets: any[] = [];
+
   pet: any = {
     name: '',
     type: '',
@@ -95,7 +98,9 @@ export class PetProfilePage implements OnInit {
     private petService: PetService,
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+        private auth: AuthService,
+
   ) {}
 
   async ngOnInit() {
@@ -180,6 +185,14 @@ export class PetProfilePage implements OnInit {
     const call$ = this.isEditMode
       ? this.petService.updatePet(this.petId, formData)
       : this.petService.addPet(formData);
+          const user = await this.auth.getCurrentUser();
+
+       if (user?.id) {
+      this.petService.getPetsByOwner(user.id).subscribe({
+        next: (pets) => (this.Pets = pets),
+        error: (err) =>
+          console.error('Erreur de chargement des animaux:', err),
+      });}
 
     call$.subscribe({
       next: () => {
